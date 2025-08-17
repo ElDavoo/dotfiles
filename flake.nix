@@ -14,12 +14,15 @@
 
     spicetify-nix = {
        url = "github:Gerg-L/spicetify-nix";
-       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    private = {
+       url = "github:ElDavoo/dotfiles-private";
     };
 
   };
 
-  outputs = inputs@{ self, nixpkgs, nixos-hardware, spicetify-nix, home-manager, ... }: {
+  outputs = inputs@{ self, nixpkgs, nixos-hardware, spicetify-nix, home-manager, private, ... }: {
     nixosConfigurations.mattone = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
@@ -27,6 +30,7 @@
         nixos-hardware.nixosModules.common-pc-ssd
         nixos-hardware.nixosModules.common-pc-laptop
         ./configuration.nix
+        private.nixosModules.ssh
         "${nixos-hardware}/common/gpu/nvidia/ampere"
         "${nixos-hardware}/common/cpu/intel/comet-lake"
         # This module works the same as the `specialArgs` parameter we used above

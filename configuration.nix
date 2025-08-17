@@ -79,18 +79,6 @@
 
   zramSwap.enable = true;
 
-  services.openssh = {
-    enable = true;
-    ports = [ 22 ];
-    settings = {
-      PasswordAuthentication = false;
-      AllowUsers = [ "dave" ]; # Allows all users by default. Can be [ "user1" "user2" ]
-      UseDns = true;
-      X11Forwarding = false;
-      PermitRootLogin = "no"; # "yes", "without-password", "prohibit-password", "forced-commands-only", "no"
-    };
-  };
-
   fonts.packages = [
    pkgs.nerd-fonts._0xproto
    pkgs.nerd-fonts.droid-sans-mono
