@@ -93,9 +93,13 @@
   mount.setuid = true;
   umount.setuid = true;
   };
-
   services.printing.enable = true;
-  services.printing.drivers = [ pkgs.hplip ];
+  services.printing.drivers = [ 
+  pkgs.hplip
+  pkgs.brlaser
+  pkgs.brgenml1lpr
+  pkgs.brgenml1cupswrapper
+ ];
 #  services.printing.logLevel = "debug";
 
   # Bootloader.
