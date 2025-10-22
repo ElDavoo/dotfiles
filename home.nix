@@ -41,8 +41,10 @@
   # basic configuration of git, please change to your own
   programs.git = {
     enable = true;
-    userName = "Davide Palma";
-    userEmail = "git@davidepalma.it";
+    settings.user = {
+      name = "Davide Palma";
+      mail = "git@davidepalma.it";
+    };
   };
 
   programs.bash = {
