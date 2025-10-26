@@ -424,7 +424,7 @@ services.dbus.packages = [ pkgs.gnome-keyring pkgs.gcr ];
   hardware.sane.enable=true;
   services.ipp-usb.enable=true;
   hardware.sane.extraBackends = [ pkgs.sane-airscan ];
-  services.udev.packages = [ pkgs.sane-airscan     pkgs.android-udev-rules];
+  services.udev.packages = [ pkgs.sane-airscan ];
   
 
 programs.spicetify =
