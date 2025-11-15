@@ -111,11 +111,11 @@
   };
   nix.gc = {
     automatic = true;
-    dates = "daily";
-    options = "--delete-older-than 1d";
+    dates = "monthly";
+    options = "--delete-older-than 30d";
   };
-  nix.settings.auto-optimise-store = true;
-  nix.optimise.automatic = true;
+  nix.settings.auto-optimise-store = false;
+  nix.optimise.automatic = false;
   boot.kernelParams= [ 
    "nvidia_modeset.hdmi_deepcolor=0"
 #   "boot.debug1devices"
