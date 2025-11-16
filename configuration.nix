@@ -17,13 +17,18 @@
 #      <nixos-hardware/common/cpu/intel/comet-lake/default.nix>
 #      <nixos-hardware/common/gpu/nvidia/ampere>
     ];
-
+  nix.settings.trusted-users = [
+    "root"
+    "dave"
+  ];
   nix.settings.substituters = [
     "https://nix-community.cachix.org"
+    "https://cache.flox.dev"
   ];
   nix.settings.trusted-public-keys = [
     # Compare to the key published at https://nix-community.org/cache
     "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    "flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs="
   ];
 
   programs.nix-ld.enable = true;
@@ -62,7 +67,8 @@
   ];
 
   # CUDA
-    nixpkgs.config.cudaSupport = true;
+    #enabling this makes firefox and thunderbird compile
+    nixpkgs.config.cudaSupport = false;
     nixpkgs.config.allowUnfreePredicate =
     p:
     builtins.all (
@@ -114,7 +120,7 @@
     dates = "monthly";
     options = "--delete-older-than 30d";
   };
-  nix.settings.auto-optimise-store = false;
+  nix.settings.auto-optimise-store = true;
   nix.optimise.automatic = false;
   boot.kernelParams= [ 
    "nvidia_modeset.hdmi_deepcolor=0"
