@@ -68,7 +68,7 @@
 
   # CUDA
     #enabling this makes firefox and thunderbird compile
-    nixpkgs.config.cudaSupport = false;
+    nixpkgs.config.cudaSupport = true;
     nixpkgs.config.allowUnfreePredicate =
     p:
     builtins.all (
