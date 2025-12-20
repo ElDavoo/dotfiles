@@ -68,7 +68,8 @@
 
   # CUDA
     #enabling this makes firefox and thunderbird compile
-    nixpkgs.config.cudaSupport = true;
+    nixpkgs.config.cudaSupport = false;
+    nixpkgs.config.cudaCapabilities = [ "8.6" ];
     nixpkgs.config.allowUnfreePredicate =
     p:
     builtins.all (
@@ -231,6 +232,10 @@
 #    turbostat
     feh
     inputs.hyprwm.packages."${pkgs.system}".hypridle
+    file-roller
+    (hashcat.override {
+    cudaSupport = true;
+    })
   ];
   };
 
@@ -343,7 +348,6 @@
   thunar-media-tags-plugin
   ];
 
-  programs.file-roller.enable = true;
 
   services.devmon.enable = true;
   services.udisks2.enable = true;
