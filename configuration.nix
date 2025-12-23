@@ -100,6 +100,8 @@
   mount.setuid = true;
   umount.setuid = true;
   };
+  
+  services.tailscale.enable = true;
   services.printing.enable = true;
   services.printing.drivers = [ 
   pkgs.hplip
