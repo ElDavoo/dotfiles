@@ -209,7 +209,7 @@
     scrcpy
     vesktop
     qbittorrent
-    xfce.xfce4-terminal
+    xfce4-terminal
     ncdu
     telegram-desktop
     gnome-calculator
@@ -360,7 +360,7 @@
 #  programs.kdeconnect.enable = true;
   programs.thunar.enable = true;
   programs.xfconf.enable = true;
-  programs.thunar.plugins = with pkgs.xfce; [
+  programs.thunar.plugins = with pkgs; [
   thunar-archive-plugin
   thunar-volman
   thunar-media-tags-plugin
