@@ -170,11 +170,28 @@
     LC_TIME = "it_IT.UTF-8";
   };
 
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "it";
-    variant = "winkeys";
-  };
+#  # Configure keymap in X11
+#  services.xserver.xkb = {
+#    layout = "it";
+#    variant = "winkeys";
+#  };
+
+# TTY settings
+#  i18n = {
+#    # luckily this also changes the keyboard layout at boot (for e.g full disk encryption passwords)
+#    consoleKeyMap = "dvorak-programmer";
+#  };
+
+  # GUI settings, this includes login screen
+  services.xserver.xkb.layout = "us";
+  services.xserver.xkb.variant = "dvp";
+  services.xserver.xkb.options = "eurosign:e";
+
+#  # Configure keymap in X11
+#  services.xserver.xkb = {
+#    layout = "it";
+#    variant = "winkeys";
+#  };
 
   # Configure console keymap
   console.keyMap = "it2";
@@ -233,8 +250,9 @@
 #    wrmsr
 #    turbostat
     feh
-    inputs.hyprwm.packages."${pkgs.system}".hypridle
+    inputs.hyprwm.packages."${pkgs.stdenv.hostPlatform.system}".hypridle
     file-roller
+    android-tools
     (hashcat.override {
     cudaSupport = true;
     })
@@ -243,8 +261,6 @@
 
   # Enable automatic login for the user.
   services.getty.autologinUser = "dave";
-
-  programs.adb.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -280,7 +296,7 @@
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  networking.firewall.enable = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
@@ -441,7 +457,7 @@ services.dbus.packages = [ pkgs.gnome-keyring pkgs.gcr ];
 
 programs.spicetify =
 let
-  spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
+  spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.stdenv.hostPlatform.system};
 in
 {
   enable = true;
