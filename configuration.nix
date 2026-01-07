@@ -102,6 +102,9 @@
   };
   
   services.tailscale.enable = true;
+  
+  services.fwupd.enable = true;
+  
   services.printing.enable = true;
   services.printing.drivers = [ 
   pkgs.hplip
