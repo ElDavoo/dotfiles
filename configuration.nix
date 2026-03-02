@@ -34,12 +34,12 @@
   programs.nix-ld.enable = true;
 
   programs.nix-ld.libraries = with pkgs; [
-    xorg.libX11
-    xorg.libXcomposite
-    xorg.libXdamage
-    xorg.libXext
-    xorg.libXfixes
-    xorg.libXrandr
+    libX11
+    libXcomposite
+    libXdamage
+    libXext
+    libXfixes
+    libXrandr
     cups
     glib
     nss
@@ -51,7 +51,7 @@
     # libexpat.so.1
     expat
     # libxcb.so.1
-    xorg.libxcb
+    libxcb
     # libxkbcommon.so.0
     libxkbcommon
     # libpango-1.0.so.0
