@@ -29,10 +29,10 @@
       modules = [
         nixos-hardware.nixosModules.common-pc-ssd
         nixos-hardware.nixosModules.common-pc-laptop
-        ./configuration.nix
         private.nixosModules.ssh
         "${nixos-hardware}/common/gpu/nvidia/ampere"
         "${nixos-hardware}/common/cpu/intel/comet-lake"
+        ./configuration.nix
         # This module works the same as the `specialArgs` parameter we used above
         # choose one of the two methods to use
         # { _module.args = { inherit inputs; };}

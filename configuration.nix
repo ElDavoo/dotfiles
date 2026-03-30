@@ -256,9 +256,16 @@
     inputs.hyprwm.packages."${pkgs.stdenv.hostPlatform.system}".hypridle
     file-roller
     android-tools
+    python3
+    nodejs
+    himalaya
     (hashcat.override {
     cudaSupport = true;
     })
+    (ollama.override {
+      acceleration = "cuda";
+    })
+    ollama
   ];
   };
 
@@ -325,20 +332,29 @@
     #GTK_THEME = "Adwaita-dark";
    };
   
-  hardware.nvidia.open = true;
-  hardware.nvidia.powerManagement.enable = true;
-  hardware.nvidia.powerManagement.finegrained = true;
-  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.beta;
+  hardware.nvidia = {
+    open = true;
+    powerManagement = {
+     enable = true;
+     finegrained = true;
+     kernelSuspendNotifier = true;
+    };
+    #package = config.boot.kernelPackages.nvidiaPackages.latest;
+    package = config.boot.kernelPackages.nvidiaPackages.beta;
+  };
+  
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia.prime = {
     offload = {
       enable = true;
       enableOffloadCmd = true;
     };
+    reverseSync.enable = true;
     # Make sure to use the correct Bus ID values for your system!
     intelBusId = "PCI:0:2:0";
     nvidiaBusId = "PCI:1:0:0";
   };
+
   programs.appimage.enable = true;
   programs.appimage.binfmt = true;
 
