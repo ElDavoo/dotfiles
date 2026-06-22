@@ -51,4 +51,11 @@
 
   hardware.nvidia-container-toolkit.enable = true;
   virtualisation.docker.daemon.settings.features.cdi = true;
+
+
+ # nix.settings.system-features = [ "gccarch-native" ];
+ # nixpkgs.buildPlatform = {
+ #   gcc.arch = "native";
+ #   system = "x86_64-linux";
+ #  };
 }
