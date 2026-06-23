@@ -8,6 +8,8 @@
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
+    hermes-agent.url = "github:NousResearch/hermes-agent";
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -27,6 +29,7 @@
   outputs = inputs @ {
     self,
     nixpkgs,
+    hermes-agent,
     nixos-hardware,
     home-manager,
     private,
@@ -42,6 +45,7 @@
         private.nixosModules.ssh
         ./configuration.nix
         home-manager.nixosModules.home-manager
+        hermes-agent.nixosModules.default
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;

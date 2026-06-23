@@ -9,6 +9,7 @@
     ./modules/users.nix
     ./modules/system-packages.nix
     ./modules/desktop.nix
+    ./modules/hermes.nix
     ./modules/storage.nix
     ./modules/services.nix
     ./modules/virtualization.nix
