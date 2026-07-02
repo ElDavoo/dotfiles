@@ -1,30 +1,31 @@
 { config, ... }: {
-  security.sudo.extraRules = [
-    {
-      users = [ "hermes" ];
-      commands = [
-        {
-          command = "/run/current-system/sw/bin/docker";
-          options = [ "NOPASSWD" ];
-        }
-      ];
-    }
+  nixpkgs.config.permittedInsecurePackages = [
+    "pnpm-10.29.2"
   ];
 
   services.hermes-agent = {
     enable = true;
-    container.enable = true;
+    user = "dave";
+    group = "users";
+    stateDir = "/home/dave/hermes";
+    createUser = false;
+    container.enable = false;
     extraDependencyGroups = [
       "messaging"
       "voice"
       "hindsight"
+      "web"
+      "google"
+      "computer-use"
+      "cli"
     ];
-    environmentFiles = [ "/var/lib/hermes/env" ];
+    environmentFiles = [ "/home/dave/hermes/.env" ];
     environment = {
       HERMES_STREAM_READ_TIMEOUT = "1000000";
       HERMES_STREAM_STALE_TIMEOUT = "1000000";
       TELEGRAM_HOME_CHANNEL_THREAD_ID = "2999565";
       TELEGRAM_HOME_CHANNEL = "573963993";
+      TELEGRAM_ALLOWED_USERS = "573963993";
     };
 
     # ── Model ──────────────────────────────────────────────────────────
@@ -37,10 +38,8 @@
       };
 
       model = {
-        base_url = "http://127.0.0.1:8001/";
-        default = "qwen3.6";
-        context_length = 80000;
-        provider = "custom";
+        default = "deepseek/deepseek-v4-flash";
+        provider = "openrouter";
         timeout = 0;
         request_timeout_seconds = 0;
       };
@@ -77,17 +76,17 @@
 
       compression = {
         enabled = true;
-        threshold = 0.65;
+        threshold = 0.85;
       };
 
       auxiliary = {
         # We are blocked while using compression anyway
-        #compression = {
-        #  model = "qwen3.52b";
-        #  max_concurrency = 1;
-        #  provider = "CPU";
-        #  timeout = 18000;
-        #};
+        compression = {
+          model = "qwen3.6";
+          provider = "GPU";
+          max_concurrency = 1;
+          timeout = 18000;
+        };
         vision = {
           model = "qwen3.54b";
           max_concurrency = 1;
@@ -148,6 +147,12 @@
           max_concurrency = 1;
           timeout = 18000;
         };
+        curator = {
+          model = "qwen3.54b";
+          provider = "CPU";
+          max_concurrency = 1;
+          timeout = 18000;
+        };
       };
 
       memory = {
@@ -157,10 +162,10 @@
 
       agent = {
         max_turns = 60;
-        verbose = true;
+        #verbose = true;
         reasoning_effort = "high";
         gateway_timeout = 0;
-        restart_drain_timeout = 180000;
+        restart_drain_timeout = 60;
         gateway_notify_interval = 1000;
       };
 
@@ -213,6 +218,14 @@
         show_reasoning = true;
       };
 
+      stt = {
+        enabled = true;
+        provider = "local";
+        local = {
+          model = "large-v3";
+        };
+      };
+
     };
 
     # ── Secrets ────────────────────────────────────────────────────────
@@ -223,26 +236,31 @@
     #};
 
     # ── MCP Servers ────────────────────────────────────────────────────
-    #mcpServers.filesystem = {
-    #  command = "npx";
-    #  args = [
-    #    "-y"
-    #    "@modelcontextprotocol/server-filesystem"
-    #    "/data/workspace"
-    #  ];
-    #};
+    mcpServers.cua-driver = {
+      command = "/run/current-system/sw/bin/steam-run";
+      args = [
+        "/home/dave/hermes/.local/bin/cua-driver"
+        "mcp"
+      ];
+      env = {
+        WAYLAND_DISPLAY = "wayland-1";
+        XDG_RUNTIME_DIR = "/run/user/1000";
+        DISPLAY = ":0";
+        XCURSOR_SIZE = "24";
+        XCURSOR_THEME = "Adwaita";
+      };
+    };
 
     # ── Container options ──────────────────────────────────────────────
-    container = {
-      image = "ubuntu:26.04";
-      backend = "docker";
-      hostUsers = [ "dave" ];
-      extraVolumes = [ "/home/dave/:/real:rw" ];
-    };
+    #container = {
+    #  image = "ubuntu:26.04";
+    #  backend = "docker";
+    #  hostUsers = [ "dave" ];
+    #  extraVolumes = [ "/home/dave/hermes:/real:rw" ];
+    #d};
 
     # ── Service tuning ─────────────────────────────────────────────────
     addToSystemPackages = true;
-    extraArgs = [ "--verbose" ];
     restart = "always";
     restartSec = 5;
   };

@@ -13,7 +13,7 @@
       "flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs="
     ];
     experimental-features = ["nix-command" "flakes"];
-    auto-optimise-store = true;
+    auto-optimise-store = true; # modificato per prova
   };
 
   nix.gc = {

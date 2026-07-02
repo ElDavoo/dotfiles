@@ -62,6 +62,7 @@
       python3
       nodejs
       himalaya
+      git-xet
       (hashcat.override {
         cudaSupport = true;
       })
