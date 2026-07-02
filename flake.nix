@@ -21,7 +21,7 @@
     };
 
     private = {
-      url = "github:ElDavoo/dotfiles-private";
+      url = "github:ElDavoo/dotfiles-private/eba6becdeb78971b8b57bca204aadc2ca454aae7";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
