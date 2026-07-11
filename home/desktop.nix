@@ -6,6 +6,8 @@
   link = path: config.lib.file.mkOutOfStoreSymlink "${dotfiles}/${path}";
 in {
   xdg.configFile = {
+    # hyprland.lua ha precedenza; hyprland.conf resta come fallback
+    "hypr/hyprland.lua".source = link "hypr/hyprland.lua";
     "hypr/hyprland.conf".source = link "hypr/hyprland.conf";
     "hypr/hypridle.conf".source = link "hypr/hypridle.conf";
     "hypr/hyprlock.conf".source = link "hypr/hyprlock.conf";
