@@ -4,11 +4,17 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
+    claude-code.url = "github:sadjow/claude-code-nix";
+
     hyprwm.url = "github:hyprwm/hypridle";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
     hermes-agent.url = "github:NousResearch/hermes-agent";
+
+    # Uses its own pinned nixpkgs: the flake needs nodePackages,
+    # which was removed from nixpkgs-unstable.
+    claude-desktop.url = "github:k3d3/claude-desktop-linux-flake";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -42,7 +48,10 @@
       inherit system;
       specialArgs = {inherit inputs;};
       modules = [
-        private.nixosModules.ssh
+        {
+          nixpkgs.overlays = [inputs.claude-code.overlays.default];
+        }
+        #private.nixosModules.ssh
         ./configuration.nix
         home-manager.nixosModules.home-manager
         hermes-agent.nixosModules.default
