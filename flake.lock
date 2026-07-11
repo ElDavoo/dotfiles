@@ -255,27 +255,6 @@
         "type": "github"
       }
     },
-    "private": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1755466996,
-        "narHash": "sha256-Xo43Th1iVk2G0Vwx06kKsBNyRH0o6e8mU11EQV+QxNY=",
-        "owner": "ElDavoo",
-        "repo": "dotfiles-private",
-        "rev": "eba6becdeb78971b8b57bca204aadc2ca454aae7",
-        "type": "github"
-      },
-      "original": {
-        "owner": "ElDavoo",
-        "repo": "dotfiles-private",
-        "rev": "eba6becdeb78971b8b57bca204aadc2ca454aae7",
-        "type": "github"
-      }
-    },
     "pyproject-build-systems": {
       "inputs": {
         "nixpkgs": [
@@ -334,7 +313,6 @@
         "home-manager": "home-manager",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_5",
-        "private": "private",
         "sops-nix": "sops-nix",
         "spicetify-nix": "spicetify-nix"
       }

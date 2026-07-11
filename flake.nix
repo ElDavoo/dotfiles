@@ -28,11 +28,6 @@
       url = "github:Gerg-L/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    private = {
-      url = "github:ElDavoo/dotfiles-private/eba6becdeb78971b8b57bca204aadc2ca454aae7";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = inputs @ {
@@ -41,7 +36,6 @@
     hermes-agent,
     nixos-hardware,
     home-manager,
-    private,
     ...
   }: let
     system = "x86_64-linux";
@@ -54,7 +48,6 @@
         {
           nixpkgs.overlays = [inputs.claude-code.overlays.default];
         }
-        #private.nixosModules.ssh
         ./configuration.nix
         home-manager.nixosModules.home-manager
         hermes-agent.nixosModules.default

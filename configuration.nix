@@ -13,6 +13,7 @@
     ./modules/storage.nix
     ./modules/secrets.nix
     ./modules/services.nix
+    ./modules/ssh.nix
     ./modules/virtualization.nix
     ./modules/spicetify.nix
   ];
