@@ -168,15 +168,21 @@
         "interval": 600,
         "rotate": 6,
     },
+    // Icone versionate nel repo: i path assoluti verso /nix/store o
+    // /usr/share spariscono (GC / non esistono su NixOS) e waybar
+    // nasconde in silenzio i moduli image con path mancante.
+    // "interval": "once" è obbligatorio: in waybar 0.15 l'intervallo di
+    // default del modulo image è 1ms (bug upstream) -> 100% CPU.
     "image#exit": {
-        "path": "/nix/store/2qfd107jf55wshm7926s3bkdy32lrqqs-nwg-bar-0.1.6/share/nwg-bar/images/system-shutdown.svg",
+        "path": "/home/dave/.config/waybar/icons/system-shutdown.svg",
         "size": 24,
+        "interval": "once",
         "on-click": "nwg-bar"
     },
     "image#launcher": {
-        "path": "/usr/share/icons/breeze-dark/preferences/22/preferences-system-linux.svg",
+        "path": "/home/dave/.config/waybar/icons/tux.svg",
         "size": 24,
-        "rotate": 330,
+        "interval": "once",
         "on-click": "pkill wofi || wofi -I --show drun"
     }
 }

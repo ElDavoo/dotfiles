@@ -17,5 +17,6 @@ in {
     "waybar/config".source = link "waybar/config";
     "waybar/style.css".source = link "waybar/style.css";
     "waybar/mediaplayer.py".source = link "waybar/mediaplayer.py";
+    "waybar/icons".source = link "waybar/icons";
   };
 }
