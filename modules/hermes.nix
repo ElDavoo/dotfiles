@@ -1,10 +1,10 @@
-{ config, ... }: {
+{config, ...}: {
   nixpkgs.config.permittedInsecurePackages = [
     "pnpm-10.29.2"
   ];
 
   services.hermes-agent = {
-    enable = true;
+    enable = false;
     user = "dave";
     group = "users";
     stateDir = "/home/dave/hermes";
@@ -19,7 +19,7 @@
       "computer-use"
       "cli"
     ];
-    environmentFiles = [ "/home/dave/hermes/.env" ];
+    environmentFiles = ["/home/dave/hermes/.env"];
     environment = {
       HERMES_STREAM_READ_TIMEOUT = "1000000";
       HERMES_STREAM_STALE_TIMEOUT = "1000000";
@@ -30,7 +30,6 @@
 
     # ── Model ──────────────────────────────────────────────────────────
     settings = {
-
       #approvals.gateway_timeout
       approvals = {
         gateway_timeout = 0;
@@ -62,7 +61,7 @@
           request_timeout_seconds = 0;
         }
       ];
-      toolsets = [ "all" ];
+      toolsets = ["all"];
       max_turns = 100;
       terminal = {
         backend = "local";
@@ -182,7 +181,7 @@
       platforms = {
         telegram = {
           enabled = true;
-          allowed_chats = [ 573963993 ];
+          allowed_chats = [573963993];
           extra = {
             rich_messages = false;
             dm_topics = [
@@ -199,7 +198,6 @@
             ];
           };
         };
-
       };
 
       unauthorized_dm_behavior = "ignore";
@@ -225,7 +223,6 @@
           model = "large-v3";
         };
       };
-
     };
 
     # ── Secrets ────────────────────────────────────────────────────────
@@ -264,5 +261,4 @@
     restart = "always";
     restartSec = 5;
   };
-
 }
