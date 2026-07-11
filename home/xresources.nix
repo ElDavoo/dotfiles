@@ -1,6 +1,6 @@
 _: {
   xresources.properties = {
-    "Xcursor.size" = 16;
+    # Xcursor.size è gestito da home.pointerCursor (home/cursor.nix)
     "Xft.dpi" = 172;
   };
 }

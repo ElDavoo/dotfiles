@@ -30,10 +30,9 @@ hl.monitor({
 
 hl.env("AQ_DRM_DEVICES", "/dev/dri/card1:/dev/dri/card0")
 hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
-hl.env("HYPRCURSOR_THEME", "rose-pine-hyprcursor")
-hl.env("XCURSOR_SIZE", "24")
-hl.env("XCURSOR_THEME", "Adwaita")
 hl.env("GDK_SCALE", "1") -- toolkit-specific scale
+-- XCURSOR_* e HYPRCURSOR_* sono impostate da home-manager
+-- (home.pointerCursor in home/cursor.nix)
 
 -----------------------
 ---- LOOK AND FEEL ----
@@ -209,7 +208,6 @@ hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"), { rep
 -------------------
 
 hl.on("hyprland.start", function()
-    hl.exec_cmd("hyprctl setcursor Adwaita 24")
     hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
     hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
     hl.exec_cmd("kwalletd5")
