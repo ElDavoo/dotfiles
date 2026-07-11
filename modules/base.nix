@@ -16,10 +16,15 @@
     auto-optimise-store = true; # modificato per prova
   };
 
-  nix.gc = {
-    automatic = true;
-    dates = "monthly";
-    options = "--delete-older-than 30d";
+  # nh: rebuild con output leggibile (nh os switch) + gc automatico
+  programs.nh = {
+    enable = true;
+    flake = "/home/dave/git/dotfiles";
+    clean = {
+      enable = true;
+      dates = "monthly";
+      extraArgs = "--keep 5 --keep-since 30d";
+    };
   };
   nix.optimise.automatic = false;
 
