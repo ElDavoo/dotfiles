@@ -6,8 +6,6 @@
 
     claude-code.url = "github:sadjow/claude-code-nix";
 
-    hyprwm.url = "github:hyprwm/hypridle";
-
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
     hermes-agent.url = "github:NousResearch/hermes-agent";
@@ -58,6 +56,7 @@
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
+          home-manager.backupFileExtension = "hm-bak";
           home-manager.users.dave = import ./home.nix;
         }
       ];
