@@ -34,7 +34,6 @@
     self,
     nixpkgs,
     hermes-agent,
-    nixos-hardware,
     home-manager,
     ...
   }: let
@@ -65,6 +64,14 @@
     checks.${system} = {
       alejandra = pkgs.runCommand "alejandra-check" {buildInputs = [pkgs.alejandra];} ''
         alejandra --check ${self}
+        touch $out
+      '';
+      statix = pkgs.runCommand "statix-check" {buildInputs = [pkgs.statix];} ''
+        statix check ${self}
+        touch $out
+      '';
+      deadnix = pkgs.runCommand "deadnix-check" {buildInputs = [pkgs.deadnix];} ''
+        deadnix --fail ${self}
         touch $out
       '';
       nixos-mattone = self.nixosConfigurations.mattone.config.system.build.toplevel;

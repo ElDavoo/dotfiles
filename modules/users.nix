@@ -1,4 +1,4 @@
-{...}: {
+_: {
   users.users.dave = {
     isNormalUser = true;
     description = "Davide";

@@ -1,5 +1,5 @@
 # Migrato da dotfiles-private (non conteneva nulla di segreto).
-{...}: {
+_: {
   services.openssh = {
     enable = true;
     ports = [22];

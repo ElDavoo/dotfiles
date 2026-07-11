@@ -1,4 +1,4 @@
-{...}: {
+_: {
   programs.fuse.userAllowOther = true;
 
   security.wrappers = {

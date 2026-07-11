@@ -1,0 +1,2 @@
+# `foo.bar = x; foo.baz = y;` è l'idioma NixOS, non un errore.
+disabled = ["repeated_keys"]
