@@ -3,7 +3,7 @@
     enable = true;
     settings.user = {
       name = "Davide Palma";
-      mail = "git@davidepalma.it";
+      email = "git@davidepalma.it";
     };
   };
 }

@@ -6,8 +6,9 @@
     ];
   };
 
+  networking.firewall.enable = true;
   networking.firewall.checkReversePath = "loose";
-  networking.firewall.enable = false;
+  networking.firewall.trustedInterfaces = ["tailscale0"];
 
   services.tailscale.enable = true;
 }

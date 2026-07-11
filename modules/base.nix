@@ -27,21 +27,6 @@
     cudaSupport = false;
     cudaCapabilities = ["8.6"];
     allowUnfree = true;
-    allowUnfreePredicate = p:
-      builtins.all (
-        license:
-          license.free
-          || builtins.elem license.shortName [
-            "CUDA EULA"
-            "cuDNN EULA"
-            "cuTENSOR EULA"
-            "NVidia OptiX EULA"
-          ]
-      ) (
-        if builtins.isList p.meta.license
-        then p.meta.license
-        else [p.meta.license]
-      );
   };
 
   programs.nix-ld.enable = true;
@@ -97,6 +82,5 @@
 
   console.keyMap = "it2";
 
-  system.autoUpgrade.enable = true;
   system.stateVersion = "24.11";
 }
