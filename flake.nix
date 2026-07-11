@@ -67,7 +67,8 @@
         touch $out
       '';
       statix = pkgs.runCommand "statix-check" {buildInputs = [pkgs.statix];} ''
-        statix check ${self}
+        cd ${self}
+        statix check .
         touch $out
       '';
       deadnix = pkgs.runCommand "deadnix-check" {buildInputs = [pkgs.deadnix];} ''
