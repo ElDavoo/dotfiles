@@ -1,0 +1,14 @@
+# Chiavi:
+# - host_mattone: derivata dalla chiave SSH di sistema (/etc/ssh/ssh_host_ed25519_key)
+#   -> usata da sops-nix per decifrare all'attivazione
+# - dave: chiave di editing (~/.config/sops/age/keys.txt)
+#   -> usata per modificare i segreti con `sops secrets/<file>`
+keys:
+  - &host_mattone age1d775wtygrgtpa2seutp92ga4psxhrdwr3xw5tp40w48u4nht5yhquq85zx
+  - &dave age1j78faculr27e4k6xfqrke3sl0p9sl3hu48n0r8kjmy2vyg4d9q7qrpakdt
+creation_rules:
+  - path_regex: secrets/.*
+    key_groups:
+      - age:
+          - *host_mattone
+          - *dave

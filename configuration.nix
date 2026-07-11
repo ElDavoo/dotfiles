@@ -11,6 +11,7 @@
     ./modules/desktop.nix
     ./modules/hermes.nix
     ./modules/storage.nix
+    ./modules/secrets.nix
     ./modules/services.nix
     ./modules/virtualization.nix
     ./modules/spicetify.nix
