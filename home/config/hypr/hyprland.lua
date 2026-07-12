@@ -149,7 +149,8 @@ hl.bind(mainMod .. " + space", hl.dsp.exec_cmd("hyprctl switchxkblayout current 
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd("xfce4-terminal"))
 hl.bind(mainMod .. " + C", hl.dsp.window.close())
 hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("nwg-bar"))
-hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("hyprlock & bash -c 'sleep 3 && hyprctl dispatch dpms off'"))
+-- dpms via forma Lua: "hyprctl dispatch dpms off" (legacy) fallisce in config Lua.
+hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("hyprlock & (sleep 3 && hyprctl dispatch \"hl.dsp.dpms('off')\")"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("thunar"))
 hl.bind(mainMod .. " + J", hl.dsp.exec_cmd("joplin-desktop"))
 hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("/home/dave/Scaricati/Zotero_linux-x86_64/zotero"))
@@ -207,28 +208,25 @@ hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"), { rep
 ---- AUTOSTART ----
 -------------------
 
+-- La maggior parte dei daemon/applet è gestita da home-manager come servizi
+-- systemd --user (vedi home/services.nix): dunst, cliphist, hyprpaper,
+-- blueman, kdeconnect, mpris-proxy, gnome-keyring, hypridle. Qui restano solo
+-- le cose senza modulo HM o legate a path fuori dallo store.
 hl.on("hyprland.start", function()
     hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
     hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
     hl.exec_cmd("kwalletd5")
-    hl.exec_cmd("waybar")
-    hl.exec_cmd("dunst")
+    -- waybar dietro il proxy che riscrive i click sui workspace (config Lua:
+    -- il modulo nativo manda "dispatch workspace N", non valido come Lua).
+    hl.exec_cmd("$HOME/.config/waybar/waybar-hypr-proxy.py")
     hl.exec_cmd("nm-applet --indicator")
-    hl.exec_cmd("wl-gammarelay")
-    hl.exec_cmd("wl-paste --type text --watch cliphist store")  -- Stores only text data
-    hl.exec_cmd("wl-paste --type image --watch cliphist store") -- Stores only image data
+    -- Daemon del gammarelay: il binario del pacchetto è wl-gammarelay-rs
+    -- (prima era "wl-gammarelay", command-not-found -> i widget non partivano).
+    hl.exec_cmd("wl-gammarelay-rs")
     hl.exec_cmd("xwaylandvideobridge")
-    hl.exec_cmd("hyprpaper")
-    hl.exec_cmd("blueman-applet")
-    hl.exec_cmd("udiskie")
-    hl.exec_cmd("kdeconnectd")
-    hl.exec_cmd("kdeconnect-indicator")
     hl.exec_cmd("libinput-gestures-setup autostart start")
-    hl.exec_cmd("mpris-proxy")
     hl.exec_cmd("/home/dave/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox")
-    hl.exec_cmd("hypridle")
     hl.exec_cmd("/home/dave/Scaricati/whatpulse-linux-latest_amd64.AppImage")
-    hl.exec_cmd("gnome-keyring-daemon --replace --components=secrets")
     -- Dalla vecchia config, path /usr/* inesistenti su NixOS (già no-op):
     -- /usr/libexec/polkit-gnome-authentication-agent-1
     -- /usr/lib64/libexec/polkit-kde-authentication-agent-1

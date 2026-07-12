@@ -19,16 +19,12 @@
     wl-gammarelay-rs
     wttrbar
     thunderbird
-    firefox
-    waybar
     mpv
     yt-dlp
     #    signal-desktop
     tremotesf
     grim
     slurp
-    dunst
-    hyprpaper
     hyprpolkitagent
     font-awesome
     devmem2
@@ -41,7 +37,6 @@
     nwg-displays
     #    mediainfo-gui
     wl-clipboard
-    cliphist
     #    amule-gui
     #    mkvtoolnix
     networkmanagerapplet
@@ -49,7 +44,6 @@
     #    wrmsr
     #    turbostat
     feh
-    hypridle
     file-roller
     python3
     nodejs

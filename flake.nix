@@ -28,6 +28,12 @@
       url = "github:Gerg-L/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Declarative Firefox add-ons (rycee's standalone add-on set).
+    firefox-addons = {
+      url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
@@ -45,7 +51,12 @@
       specialArgs = {inherit inputs;};
       modules = [
         {
-          nixpkgs.overlays = [inputs.claude-code.overlays.default];
+          nixpkgs.overlays = [
+            inputs.claude-code.overlays.default
+            # Espone pkgs.firefox-addons costruito con la nostra nixpkgs
+            # (così allowUnfree copre estensioni come Tampermonkey).
+            inputs.firefox-addons.overlays.default
+          ];
         }
         ./configuration.nix
         home-manager.nixosModules.home-manager
@@ -54,6 +65,7 @@
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.backupFileExtension = "hm-bak";
+          home-manager.extraSpecialArgs = {inherit inputs;};
           home-manager.users.dave = import ./home.nix;
         }
       ];
