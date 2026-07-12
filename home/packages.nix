@@ -12,7 +12,6 @@
     ncdu
     telegram-desktop
     gnome-calculator
-    wofi
     jetbrains-toolbox
     fractal
     #    subtitleedit

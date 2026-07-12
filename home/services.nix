@@ -131,7 +131,7 @@ _: {
 
   #### Tray / applet / daemon (prima exec-once in hyprland.lua) ####
 
-  services.dunst.enable = true;
+  # dunst: vedi home/dunst.nix
 
   # Clipboard history (rimpiazza i due `wl-paste --watch cliphist store`).
   services.cliphist = {

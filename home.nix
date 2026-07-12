@@ -5,6 +5,8 @@
     ./home/desktop.nix
     ./home/firefox.nix
     ./home/waybar.nix
+    ./home/wofi.nix
+    ./home/dunst.nix
     ./home/services.nix
     ./home/xresources.nix
     ./home/packages.nix
