@@ -226,7 +226,8 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("xwaylandvideobridge")
     hl.exec_cmd("libinput-gestures-setup autostart start")
     hl.exec_cmd("/home/dave/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox")
-    hl.exec_cmd("/home/dave/Scaricati/whatpulse-linux-latest_amd64.AppImage")
+    -- refresh del pannello in base all'alimentazione (165 AC / 40 batteria)
+    hl.exec_cmd("refresh-rate auto")
     -- Dalla vecchia config, path /usr/* inesistenti su NixOS (già no-op):
     -- /usr/libexec/polkit-gnome-authentication-agent-1
     -- /usr/lib64/libexec/polkit-kde-authentication-agent-1

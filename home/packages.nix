@@ -48,6 +48,7 @@
     nodejs
     himalaya
     git-xet
+    gh
     (hashcat.override {
       cudaSupport = true;
     })

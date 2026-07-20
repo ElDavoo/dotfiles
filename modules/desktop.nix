@@ -9,10 +9,13 @@
   };
 
   programs.steam.enable = true;
+  programs.steam.extraCompatPackages = [pkgs.proton-ge-bin];
+  programs.gamescope.enable = true;
+  programs.gamemode.enable = true;
   services.pipewire.enable = true;
 
   environment.sessionVariables = {
-    WLR_NO_HARDWARE_CURSORS = "1";
+    # WLR_NO_HARDWARE_CURSORS non serve più con explicit sync (driver >=555)
     NIXOS_OZONE_WL = "1";
   };
 

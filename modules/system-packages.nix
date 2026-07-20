@@ -13,5 +13,6 @@
     killall
     rclone
     libsecret
+    mangohud
   ];
 }

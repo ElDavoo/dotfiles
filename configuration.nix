@@ -6,6 +6,7 @@
     ./hosts/mattone
     ./modules/base.nix
     ./modules/networking.nix
+    ./modules/power.nix
     ./modules/users.nix
     ./modules/system-packages.nix
     ./modules/desktop.nix
@@ -16,5 +17,7 @@
     ./modules/ssh.nix
     ./modules/virtualization.nix
     ./modules/spicetify.nix
+    ./modules/gparted-live.nix
+    ./modules/controller.nix
   ];
 }

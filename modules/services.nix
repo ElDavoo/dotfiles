@@ -2,6 +2,9 @@
   services.fwupd.enable = true;
 
   services.printing.enable = true;
+  # niente cups-browsed: interroga la rete in continuo per scoprire
+  # stampanti; le stampanti si aggiungono a mano quando servono
+  services.printing.browsed.enable = false;
   services.printing.drivers = [
     pkgs.hplip
     pkgs.brlaser

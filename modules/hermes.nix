@@ -1,6 +1,7 @@
 _: {
   nixpkgs.config.permittedInsecurePackages = [
     "pnpm-10.29.2"
+    "electron-40.10.5"
   ];
 
   services.hermes-agent = {

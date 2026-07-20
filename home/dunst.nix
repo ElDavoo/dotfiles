@@ -55,8 +55,8 @@
         sticky_history = true;
         history_length = 20;
 
-        mouse_left_click = "close_current";
-        mouse_middle_click = "do_action, close_current";
+        mouse_left_click = "do_action, close_current";
+        mouse_middle_click = "close_current";
         mouse_right_click = "close_all";
       };
 

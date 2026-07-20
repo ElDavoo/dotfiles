@@ -1,9 +1,3 @@
-# Waybar gestita in modo dichiarativo (prima era JSON/CSS symlinkati).
-# Le icone sono referenziate come path dello store: diventano GC-root della
-# generazione, quindi spariscono i path assoluti /nix/store o /usr/share che
-# venivano garbage-collected (waybar nasconde in silenzio i moduli image con
-# path mancante).
-#
 # waybar NON viene avviata via systemd (programs.waybar.systemd.enable = false,
 # default): la lancia il proxy waybar-hypr-proxy.py da hyprland.lua, che
 # riscrive i click sui workspace per la config in Lua.
@@ -46,8 +40,8 @@ _: {
         capslock = true;
         format = "{name} {icon}";
         format-icons = {
-          locked = "";
-          unlocked = "";
+          locked = "";
+          unlocked = "";
         };
         rotate = 357;
       };
@@ -80,13 +74,13 @@ _: {
       };
 
       cpu = {
-        format = "{usage}% ";
+        format = "{usage}% ";
         on-click = "xfce4-terminal -e htop";
         rotate = 357;
       };
 
       memory = {
-        format = "{}% ";
+        format = "{}% ";
         on-click = "xfce4-terminal -e htop";
         rotate = 357;
       };
@@ -94,7 +88,7 @@ _: {
       temperature = {
         critical-threshold = 90;
         format = "{temperatureC}°C";
-        format-icons = ["" "" ""];
+        format-icons = ["" "" ""];
         rotate = 357;
       };
 
@@ -112,7 +106,7 @@ _: {
         };
         format = "{capacity}% {icon}";
         format-charging = "{capacity}% 󱈑";
-        format-plugged = "{capacity}% ";
+        format-plugged = "{capacity}% ";
         format-alt = "{time} {icon}";
         format-full = "";
         format-icons = ["󰳲" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹"];
@@ -120,10 +114,10 @@ _: {
       };
 
       network = {
-        format-wifi = "{essid} ({signalStrength}%) ";
-        format-ethernet = "{ipaddr}/{cidr} ";
-        tooltip-format = "{ifname} via {gwaddr} ";
-        format-linked = "{ifname} (No IP) ";
+        format-wifi = "{essid} ({signalStrength}%) ";
+        format-ethernet = "{ipaddr}/{cidr} ";
+        tooltip-format = "{ifname} via {gwaddr} ";
+        format-linked = "{ifname} (No IP) ";
         format-disconnected = "Disconnected ⚠";
         format-alt = "{ifname}: {ipaddr}/{cidr}";
       };
@@ -131,19 +125,19 @@ _: {
       pulseaudio = {
         scroll-step = 1;
         format = "{volume}% {icon} {format_source}";
-        format-bluetooth = "{volume}% {icon} {format_source}";
-        format-bluetooth-muted = "󰝟 {icon} {format_source}";
+        format-bluetooth = "{volume}% {icon} {format_source}";
+        format-bluetooth-muted = "󰝟 {icon} {format_source}";
         format-muted = "󰝟 {format_source}";
-        format-source = "{volume}% ";
-        format-source-muted = "";
+        format-source = "{volume}% ";
+        format-source-muted = "";
         format-icons = {
-          headphone = "";
-          hands-free = "";
-          headset = "";
-          phone = "";
-          portable = "";
-          car = "";
-          default = ["" "" ""];
+          headphone = "";
+          hands-free = "";
+          headset = "";
+          phone = "";
+          portable = "";
+          car = "";
+          default = ["" "" ""];
         };
         on-click = "pavucontrol";
         rotate = 358;
@@ -155,7 +149,7 @@ _: {
         return-type = "json";
         max-length = 60;
         format-icons = {
-          spotify = "";
+          spotify = "";
           default = "🎜";
         };
         escape = true;
@@ -172,7 +166,7 @@ _: {
       };
 
       "custom/wl-gammarelay-temperature" = {
-        format = "{} ";
+        format = "{} ";
         exec = "wl-gammarelay-rs watch {t}";
         on-scroll-up = "busctl --user -- call rs.wl-gammarelay / rs.wl.gammarelay UpdateTemperature n +300";
         on-scroll-down = "busctl --user -- call rs.wl-gammarelay / rs.wl.gammarelay UpdateTemperature n -300";
@@ -180,7 +174,7 @@ _: {
       };
 
       "custom/wl-gammarelay-brightness" = {
-        format = "{} ";
+        format = "{} ";
         exec = "wl-gammarelay-rs watch {bp}";
         on-scroll-up = "busctl --user -- call rs.wl-gammarelay / rs.wl.gammarelay UpdateBrightness d +0.05";
         on-scroll-down = "busctl --user -- call rs.wl-gammarelay / rs.wl.gammarelay UpdateBrightness d -0.05";
@@ -199,15 +193,15 @@ _: {
         format = "{}%📱";
         exec = "adb shell dumpsys battery | grep level | cut -c10-";
         on-click = "scrcpy --no-audio";
-        interval = 600;
+        interval = 60;
         rotate = 6;
       };
 
-      # "interval": "once" è obbligatorio: in waybar 0.15 l'intervallo di
-      # default del modulo image è 1ms (bug upstream) -> 100% CPU.
       "image#exit" = {
         path = "${./config/waybar/icons/system-shutdown.svg}";
         size = 24;
+        # "interval": "once" è obbligatorio: in waybar 0.15 l'intervallo di
+        # default del modulo image è 1ms (bug upstream) -> 100% CPU.
         interval = "once";
         on-click = "nwg-bar";
       };
