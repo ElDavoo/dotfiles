@@ -19,6 +19,10 @@
   boot.blacklistedKernelModules = [
   ];
 
+  # ntsync: primitive di sincronizzazione NT nel kernel, usate da Wine/Proton
+  # (CONFIG_NTSYNC=m nel kernel). Caricandolo si ottiene /dev/ntsync.
+  boot.kernelModules = ["ntsync"];
+
   services.xserver.videoDrivers = ["nvidia"];
 
   hardware.nvidia = {

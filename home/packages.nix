@@ -26,7 +26,6 @@
     slurp
     hyprpolkitagent
     font-awesome
-    devmem2
     vscode
     pavucontrol
     joplin-desktop

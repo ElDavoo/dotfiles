@@ -61,6 +61,12 @@ in {
     RUNTIME_PM_ON_BAT = "auto";
     WIFI_PWR_ON_BAT = "on";
 
+    # NON sospendere via USB il controller Bluetooth: l'autosuspend del
+    # combo Intel (8087:0026) dopo ~2s di idle causa il "firmware bug"
+    # (missing completion reports) → il transport A2DP cade e le cuffie
+    # si spengono da sole. Escluso da TLP, power/control resta "on".
+    USB_EXCLUDE_BTUSB = 1;
+
     # ASPM aggressivo sui link PCIe a batteria
     PCIE_ASPM_ON_BAT = "powersupersave";
 

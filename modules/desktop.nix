@@ -14,6 +14,17 @@
   programs.gamemode.enable = true;
   services.pipewire.enable = true;
 
+  # Codec Bluetooth A2DP: escludo aptx_hd (latenza ~200-250ms) e lascio
+  # aptx come qualità massima praticabile. WirePlumber negozia il primo
+  # codec supportato in comune, quindi le Accentum Plus si attestano su
+  # aptx invece di aptx_hd, e la scelta è persistente al reboot.
+  services.pipewire.wireplumber.extraConfig."51-bluez-lowlatency" = {
+    "monitor.bluez.properties" = {
+      "bluez5.codecs" = ["sbc" "sbc_xq" "aac" "aptx"];
+      "bluez5.enable-sbc-xq" = true;
+    };
+  };
+
   environment.sessionVariables = {
     # WLR_NO_HARDWARE_CURSORS non serve più con explicit sync (driver >=555)
     NIXOS_OZONE_WL = "1";

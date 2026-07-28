@@ -13,17 +13,26 @@
       "flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs="
     ];
     experimental-features = ["nix-command" "flakes"];
-    auto-optimise-store = true; # modificato per prova
+
+    # Deduplica dello store disattivata (girava a ogni build).
+    auto-optimise-store = false;
+
+    # GC automatico "a domanda": durante un build, se lo spazio libero nello
+    # /nix/store scende sotto min-free, Nix raccoglie garbage fino a max-free.
+    min-free = 5 * 1024 * 1024 * 1024; # 5 GiB
+    max-free = 10 * 1024 * 1024 * 1024; # 10 GiB
   };
 
-  # nh: rebuild con output leggibile (nh os switch) + gc automatico
+  # nh: rebuild con output leggibile (nh os switch). Il clean mensile serve
+  # solo a potare le vecchie generazioni (che restano GC-root); la pulizia dei
+  # path non referenziati resta demandata a min-free/max-free.
   programs.nh = {
     enable = true;
     flake = "/home/dave/git/dotfiles";
     clean = {
       enable = true;
       dates = "monthly";
-      extraArgs = "--keep 5 --keep-since 30d";
+      extraArgs = "--keep 5";
     };
   };
   nix.optimise.automatic = false;
