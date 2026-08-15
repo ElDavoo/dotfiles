@@ -14,7 +14,9 @@
 
   boot.initrd.availableKernelModules = ["xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod"];
   boot.initrd.kernelModules = [];
-  boot.kernelModules = ["kvm-intel"];
+  # niente kvm-intel: su questo N3520 il modulo non si carica ("Operation not
+  # supported") e questo host non importa comunque modules/virtualization.nix
+  boot.kernelModules = [];
   boot.extraModulePackages = [];
 
   fileSystems."/" = {

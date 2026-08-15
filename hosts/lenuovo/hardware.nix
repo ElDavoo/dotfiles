@@ -59,11 +59,20 @@
   # arriva prima della fine (i 4 core restano usabili dentro il singolo build).
   nix.settings.max-jobs = 1;
 
-  # zram da solo non basta per i build grossi: swapfile sulla root.
+  # Swapfile sulla root, in aggiunta a zram (1,9 GB compressi).
+  #
+  # ATTENZIONE: mkswap-swapfile.service crea il file con `dd` sul percorso
+  # critico del boot, e salta il lavoro solo se il file esiste gia' ed e'
+  # esattamente di questa dimensione in MiB. Al primo boot il disco e' conteso
+  # (fstrim di common-pc-ssd + attivazione home-manager) e la scrittura va a
+  # ~7 MB/s invece dei 217 MB/s a riposo: 8 GB bloccavano il boot per oltre
+  # 20 minuti. Se cambi `size`, ricrea il file a mano prima di riavviare:
+  #   dd if=/dev/zero of=/swapfile bs=1M count=<size> && chmod 0600 /swapfile
+  #   mkswap /swapfile
   swapDevices = [
     {
       device = "/swapfile";
-      size = 8 * 1024;
+      size = 1024;
     }
   ];
 }
