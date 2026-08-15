@@ -1,17 +1,6 @@
 {pkgs, ...}: {
   services.fwupd.enable = true;
 
-  services.printing.enable = true;
-  # niente cups-browsed: interroga la rete in continuo per scoprire
-  # stampanti; le stampanti si aggiungono a mano quando servono
-  services.printing.browsed.enable = false;
-  services.printing.drivers = [
-    pkgs.hplip
-    pkgs.brlaser
-    pkgs.brgenml1lpr
-    pkgs.brgenml1cupswrapper
-  ];
-
   services.devmon.enable = true;
   services.udisks2.enable = true;
 
@@ -37,9 +26,4 @@
   };
 
   services.dbus.packages = [pkgs.gnome-keyring pkgs.gcr];
-
-  hardware.sane.enable = true;
-  services.ipp-usb.enable = true;
-  hardware.sane.extraBackends = [pkgs.sane-airscan];
-  services.udev.packages = [pkgs.sane-airscan];
 }

@@ -1,5 +1,5 @@
 {
-  description = "NixOS system configuration for mattone";
+  description = "NixOS system configuration for mattone and lenuovo";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -45,30 +45,41 @@
   }: let
     system = "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
+
+    # Un host = configuration.nix (set condiviso) + hosts/<nome> (hardware e
+    # moduli specifici), più i moduli che arrivano dai flake input e servono
+    # solo a quella macchina.
+    mkHost = hostName: extraModules:
+      nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = {inherit inputs;};
+        modules =
+          [
+            {
+              nixpkgs.overlays = [
+                inputs.claude-code.overlays.default
+                # Espone pkgs.firefox-addons costruito con la nostra nixpkgs
+                # (così allowUnfree copre estensioni come Tampermonkey).
+                inputs.firefox-addons.overlays.default
+              ];
+            }
+            ./configuration.nix
+            ./hosts/${hostName}
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.backupFileExtension = "hm-bak";
+              home-manager.extraSpecialArgs = {inherit inputs;};
+              home-manager.users.dave = import ./home.nix;
+            }
+          ]
+          ++ extraModules;
+      };
   in {
-    nixosConfigurations.mattone = nixpkgs.lib.nixosSystem {
-      inherit system;
-      specialArgs = {inherit inputs;};
-      modules = [
-        {
-          nixpkgs.overlays = [
-            inputs.claude-code.overlays.default
-            # Espone pkgs.firefox-addons costruito con la nostra nixpkgs
-            # (così allowUnfree copre estensioni come Tampermonkey).
-            inputs.firefox-addons.overlays.default
-          ];
-        }
-        ./configuration.nix
-        home-manager.nixosModules.home-manager
-        hermes-agent.nixosModules.default
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.backupFileExtension = "hm-bak";
-          home-manager.extraSpecialArgs = {inherit inputs;};
-          home-manager.users.dave = import ./home.nix;
-        }
-      ];
+    nixosConfigurations = {
+      mattone = mkHost "mattone" [hermes-agent.nixosModules.default];
+      lenuovo = mkHost "lenuovo" [];
     };
 
     formatter.${system} = pkgs.alejandra;
@@ -88,6 +99,7 @@
         touch $out
       '';
       nixos-mattone = self.nixosConfigurations.mattone.config.system.build.toplevel;
+      nixos-lenuovo = self.nixosConfigurations.lenuovo.config.system.build.toplevel;
     };
   };
 }

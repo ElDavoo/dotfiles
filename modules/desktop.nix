@@ -8,10 +8,6 @@
     withUWSM = true;
   };
 
-  programs.steam.enable = true;
-  programs.steam.extraCompatPackages = [pkgs.proton-ge-bin];
-  programs.gamescope.enable = true;
-  programs.gamemode.enable = true;
   services.pipewire.enable = true;
 
   # Codec Bluetooth A2DP: escludo aptx_hd (latenza ~200-250ms) e lascio

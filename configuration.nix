@@ -1,23 +1,14 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
+# Set condiviso da tutti gli host. Quello che vale solo per una macchina
+# (hardware, bootloader, moduli pesanti) si importa da hosts/<nome>.
 {...}: {
   imports = [
-    ./hosts/mattone
     ./modules/base.nix
     ./modules/networking.nix
-    ./modules/power.nix
     ./modules/users.nix
     ./modules/system-packages.nix
     ./modules/desktop.nix
-    ./modules/hermes.nix
     ./modules/storage.nix
-    ./modules/secrets.nix
     ./modules/services.nix
     ./modules/ssh.nix
-    ./modules/virtualization.nix
-    ./modules/spicetify.nix
-    ./modules/gparted-live.nix
-    ./modules/controller.nix
   ];
 }

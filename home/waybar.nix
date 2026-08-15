@@ -1,7 +1,15 @@
 # waybar NON viene avviata via systemd (programs.waybar.systemd.enable = false,
 # default): la lancia il proxy waybar-hypr-proxy.py da hyprland.lua, che
 # riscrive i click sui workspace per la config in Lua.
-_: {
+{
+  lib,
+  osConfig,
+  ...
+}: let
+  # Moduli che hanno senso solo su mattone: nvidia legge il power_state della
+  # dGPU, adb dipende da android-tools/scrcpy (non installati su lenuovo).
+  full = osConfig.networking.hostName == "mattone";
+in {
   programs.waybar = {
     enable = true;
 
@@ -12,23 +20,24 @@ _: {
       spacing = 2;
 
       modules-left = ["image#launcher" "hyprland/workspaces" "mpd"];
-      modules-center = ["custom/media" "custom/adb"];
-      modules-right = [
-        "custom/nvidia"
-        "custom/weather"
-        "custom/wl-gammarelay-temperature"
-        "custom/wl-gammarelay-brightness"
-        "tray"
-        "pulseaudio"
-        "cpu"
-        "memory"
-        "temperature"
-        "backlight"
-        "keyboard-state"
-        "battery"
-        "clock"
-        "image#exit"
-      ];
+      modules-center = ["custom/media"] ++ lib.optionals full ["custom/adb"];
+      modules-right =
+        lib.optionals full ["custom/nvidia"]
+        ++ [
+          "custom/weather"
+          "custom/wl-gammarelay-temperature"
+          "custom/wl-gammarelay-brightness"
+          "tray"
+          "pulseaudio"
+          "cpu"
+          "memory"
+          "temperature"
+          "backlight"
+          "keyboard-state"
+          "battery"
+          "clock"
+          "image#exit"
+        ];
 
       margin-top = 0;
       margin-bottom = 0;
