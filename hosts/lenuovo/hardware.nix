@@ -9,8 +9,32 @@
     enable = true;
     efiSupport = true;
     device = "nodev";
-    useOSProber = true;
     configurationLimit = 10;
+
+    # os-prober girato nel chroot dell'installazione non trovava niente (e
+    # comunque dipende da cosa è montato al momento del rebuild): le altre
+    # voci sono dichiarate a mano, per fs-uuid dell'ESP. Deterministico.
+    useOSProber = false;
+    extraEntries = ''
+      menuentry "Windows Boot Manager" --class windows {
+        insmod part_gpt
+        insmod fat
+        insmod chain
+        search --no-floppy --fs-uuid --set=root 06E8-108C
+        chainloader /EFI/Microsoft/Boot/bootmgfw.efi
+      }
+
+      # Fallback per la vecchia root Kali (sda5): da rimuovere insieme alla
+      # partizione. Niente accenti qui dentro: grub.cfg non viene scritto in
+      # UTF-8 e i byte non-ASCII finiscono mangiati.
+      menuentry "Kali GNU/Linux (vecchia installazione)" {
+        insmod part_gpt
+        insmod fat
+        insmod chain
+        search --no-floppy --fs-uuid --set=root 06E8-108C
+        chainloader /EFI/kali/grubx64.efi
+      }
+    '';
   };
 
   boot.loader.efi = {
