@@ -4,12 +4,18 @@
   # L'ESP è quella di Windows: 100 MB totali, ~68 MB liberi. Non ci sta un
   # kernel, quindi niente systemd-boot (che tiene kernel e initrd sull'ESP).
   # GRUB invece lascia kernel/initrd in /boot sulla root ext4 e nell'ESP mette
-  # solo grubx64.efi, pochi MB. os-prober aggiunge la voce per Windows.
+  # solo grubx64.efi, pochi MB.
   boot.loader.grub = {
     enable = true;
     efiSupport = true;
     device = "nodev";
     configurationLimit = 10;
+
+    # Boota Windows di default. Si seleziona per titolo invece che per indice
+    # così non si rompe se un domani si aggiunge una voce prima: le virgolette
+    # sono volutamente dentro la stringa, perché install-grub.pl emette
+    # `set default=<valore>` senza quoting e GRUB si fermerebbe a "Windows".
+    default = ''"Windows Boot Manager"'';
 
     # os-prober girato nel chroot dell'installazione non trovava niente (e
     # comunque dipende da cosa è montato al momento del rebuild): le altre
@@ -23,17 +29,6 @@
         search --no-floppy --fs-uuid --set=root 06E8-108C
         chainloader /EFI/Microsoft/Boot/bootmgfw.efi
       }
-
-      # Fallback per la vecchia root Kali (sda5): da rimuovere insieme alla
-      # partizione. Niente accenti qui dentro: grub.cfg non viene scritto in
-      # UTF-8 e i byte non-ASCII finiscono mangiati.
-      menuentry "Kali GNU/Linux (vecchia installazione)" {
-        insmod part_gpt
-        insmod fat
-        insmod chain
-        search --no-floppy --fs-uuid --set=root 06E8-108C
-        chainloader /EFI/kali/grubx64.efi
-      }
     '';
   };
 
@@ -41,6 +36,9 @@
     canTouchEfiVariables = true;
     efiSysMountPoint = "/boot/efi";
   };
+
+  # Un secondo di menu: abbastanza per scegliere NixOS, senza attese.
+  boot.loader.timeout = 1;
 
   # Bay Trail: i C-state profondi causano freeze casuali su questa piattaforma
   # (bug noto della famiglia N3xxx/J1xxx). max_cstate=1 costa un po' di
