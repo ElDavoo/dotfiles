@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 A Nix flake defining the NixOS system configuration for two hosts:
 
 - `mattone` — Intel + NVIDIA laptop running Hyprland, the main machine.
-- `lenuovo` — Lenovo IdeaPad Flex 15 (Bay Trail N3520, 4 GB RAM, iGPU only), a slim install that shares the base but skips the heavy modules.
+- `lenuovo` — Lenovo Yoga 2 11 (Bay Trail N3520, 4 GB RAM, iGPU only), a slim install that shares the base but skips the heavy modules. nixos-hardware has no profile for this model, so it only gets the generic `common-*` ones.
 
 User-level config for `dave` is managed with home-manager, integrated as a NixOS module (not standalone). nixpkgs tracks `nixos-unstable`.
 

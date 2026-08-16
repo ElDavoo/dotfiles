@@ -13,6 +13,9 @@
   ];
 
   hardware.sane.enable = true;
+  # Come per docker: il gruppo scanner lo crea hardware.sane, quindi la
+  # membership vive qui invece che nel modules/users.nix condiviso.
+  users.users.dave.extraGroups = ["scanner"];
   services.ipp-usb.enable = true;
   hardware.sane.extraBackends = [pkgs.sane-airscan];
   services.udev.packages = [pkgs.sane-airscan];

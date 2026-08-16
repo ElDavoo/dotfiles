@@ -1,5 +1,6 @@
-# Lenovo IdeaPad Flex 15 (20332): Pentium N3520 (Bay Trail), 4 GB di RAM,
-# iGPU Gen7, SSD condiviso con Windows.
+# Lenovo Yoga 2 11 (machine type 20332): Pentium N3520 (Bay Trail), 4 GB di
+# RAM, iGPU Gen7, SSD condiviso con Windows. (Il DMI dice product_name=20332,
+# product_version="Lenovo Yoga 2 11": non è un IdeaPad Flex 15.)
 {pkgs, ...}: {
   # L'ESP è quella di Windows: 100 MB totali, ~68 MB liberi. Non ci sta un
   # kernel, quindi niente systemd-boot (che tiene kernel e initrd sull'ESP).

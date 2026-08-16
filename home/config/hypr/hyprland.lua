@@ -153,7 +153,6 @@ hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("nwg-bar"))
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("hyprlock & (sleep 3 && hyprctl dispatch \"hl.dsp.dpms('off')\")"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("thunar"))
 hl.bind(mainMod .. " + J", hl.dsp.exec_cmd("joplin-desktop"))
-hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("/home/dave/Scaricati/Zotero_linux-x86_64/zotero"))
 hl.bind(mainMod .. " + F", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + S", hl.dsp.window.swap({ next = true }))
 hl.bind(mainMod .. " + T", hl.dsp.group.toggle())
@@ -215,7 +214,8 @@ hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"), { rep
 hl.on("hyprland.start", function()
     hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
     hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
-    hl.exec_cmd("kwalletd5")
+    -- (kwalletd5 rimosso: non era installato da nessuna parte, e il portachiavi
+    -- ora è libsecret -- vedi modules/system-packages.nix.)
     -- waybar dietro il proxy che riscrive i click sui workspace (config Lua:
     -- il modulo nativo manda "dispatch workspace N", non valido come Lua).
     hl.exec_cmd("$HOME/.config/waybar/waybar-hypr-proxy.py")
@@ -223,11 +223,14 @@ hl.on("hyprland.start", function()
     -- Daemon del gammarelay: il binario del pacchetto è wl-gammarelay-rs
     -- (prima era "wl-gammarelay", command-not-found -> i widget non partivano).
     hl.exec_cmd("wl-gammarelay-rs")
-    hl.exec_cmd("xwaylandvideobridge")
+    -- (xwaylandvideobridge rimosso: era Qt5/KDE Gear 5 ed è stato cancellato
+    -- da nixpkgs con la fine del supporto a Plasma 5, senza sostituto. Non è
+    -- più necessario: xdg-desktop-portal-hyprland fa screen sharing nativo.)
     hl.exec_cmd("libinput-gestures-setup autostart start")
-    hl.exec_cmd("/home/dave/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox")
-    -- refresh del pannello in base all'alimentazione (165 AC / 40 batteria)
-    hl.exec_cmd("refresh-rate auto")
+    -- refresh del pannello in base all'alimentazione (165 AC / 40 batteria).
+    -- refresh-rate arriva da modules/power.nix, che importa solo mattone: il
+    -- guard evita l'errore all'avvio sugli altri host.
+    hl.exec_cmd("command -v refresh-rate >/dev/null && refresh-rate auto")
     -- Dalla vecchia config, path /usr/* inesistenti su NixOS (già no-op):
     -- /usr/libexec/polkit-gnome-authentication-agent-1
     -- /usr/lib64/libexec/polkit-kde-authentication-agent-1
@@ -236,14 +239,6 @@ end)
 ----------------------
 ---- WINDOW RULES ----
 ----------------------
-
-hl.window_rule({
-    name  = "hide-xwaylandvideobridge",
-    match = { class = "^(xwaylandvideobridge)$" },
-
-    opacity          = "0.0 override 0.0 override",
-    no_initial_focus = true,
-})
 
 -- Firefox screen sharing indicator
 hl.window_rule({

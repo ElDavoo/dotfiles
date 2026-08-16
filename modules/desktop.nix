@@ -26,6 +26,15 @@
     NIXOS_OZONE_WL = "1";
   };
 
+  # I bind XF86MonBrightnessUp/Down di Hyprland chiamano brightnessctl, che non
+  # era installato da nessuna parte: da qui il "non funziona" dei tasti Fn.
+  # Le regole udev del pacchetto danno al gruppo video il permesso di scrittura
+  # su /sys/class/backlight/*/brightness (root-only di default) — senza di esse
+  # brightnessctl fallirebbe comunque da utente. dave è nel gruppo video
+  # (modules/users.nix).
+  environment.systemPackages = [pkgs.brightnessctl];
+  services.udev.packages = [pkgs.brightnessctl];
+
   programs.appimage.enable = true;
   programs.appimage.binfmt = true;
 

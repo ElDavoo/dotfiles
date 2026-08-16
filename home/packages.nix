@@ -33,25 +33,29 @@ in {
       yt-dlp
       python3
       gh
-    ]
-    ++ lib.optionals full [
-      #    devenv
+      telegram-desktop
+      joplin-desktop
       anydesk
-      libreoffice
       android-tools
       scrcpy
       vesktop
-      qbittorrent
-      telegram-desktop
       gnome-calculator
-      jetbrains-toolbox
+      thunderbird
+      vscode
+
+      # Serve al click play/pause di custom/media e al typelib Playerctl di
+      # mediaplayer.py: era riferito dalla config ma non installato, quindi il
+      # modulo moriva in silenzio.
+      playerctl
+    ]
+    ++ lib.optionals full [
+      #    devenv
+      libreoffice
+      qbittorrent
       fractal
       #    subtitleedit
-      thunderbird
       #    signal-desktop
       tremotesf
-      vscode
-      joplin-desktop
       #    mediainfo-gui
       #    amule-gui
       #    mkvtoolnix

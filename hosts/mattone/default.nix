@@ -27,6 +27,10 @@
 
   networking.hostName = "mattone";
 
+  # Solo qui: è la macchina personale che sta sempre in casa. Sugli altri host
+  # si passa dal login normale della getty.
+  services.getty.autologinUser = "dave";
+
   environment.systemPackages = [
     inputs.claude-desktop.packages.${pkgs.stdenv.hostPlatform.system}.claude-desktop-with-fhs
   ];

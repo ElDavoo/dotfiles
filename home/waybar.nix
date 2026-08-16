@@ -3,12 +3,39 @@
 # riscrive i click sui workspace per la config in Lua.
 {
   lib,
+  pkgs,
   osConfig,
   ...
 }: let
   # Moduli che hanno senso solo su mattone: nvidia legge il power_state della
-  # dGPU, adb dipende da android-tools/scrcpy (non installati su lenuovo).
+  # dGPU, che lenuovo non ha.
   full = osConfig.networking.hostName == "mattone";
+
+  # Il meteo segue la macchina, non l'utente: mattone sta a Valbonne,
+  # lenuovo ad Apricena.
+  weatherLocation =
+    if full
+    then "Valbonne"
+    else "Apricena";
+
+  # mediaplayer.py fa `import gi` + `gi.require_version("Playerctl", "2.0")`:
+  # il python3 nudo di home/packages.nix non ha né PyGObject né il typelib di
+  # playerctl, quindi il modulo custom/media moriva all'avvio (ModuleNotFound:
+  # gi) e la barra restava vuota. Qui il python giusto e GI_TYPELIB_PATH.
+  #
+  # Lo script sta nello store (non è più un symlink fuori-store): per vedere
+  # una modifica serve un rebuild.
+  mediaplayer = pkgs.writeShellApplication {
+    name = "waybar-mediaplayer";
+    runtimeInputs = [
+      (pkgs.python3.withPackages (ps: [ps.pygobject3]))
+      pkgs.playerctl
+    ];
+    text = ''
+      export GI_TYPELIB_PATH="${pkgs.playerctl}/lib/girepository-1.0''${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}"
+      exec python3 ${./config/waybar/mediaplayer.py} "$@"
+    '';
+  };
 in {
   programs.waybar = {
     enable = true;
@@ -20,7 +47,9 @@ in {
       spacing = 2;
 
       modules-left = ["image#launcher" "hyprland/workspaces" "mpd"];
-      modules-center = ["custom/media"] ++ lib.optionals full ["custom/adb"];
+      # custom/adb non è più gated su mattone: adb (programs.adb.enable) e
+      # scrcpy ora ci sono su tutti gli host.
+      modules-center = ["custom/media" "custom/adb"];
       modules-right =
         lib.optionals full ["custom/nvidia"]
         ++ [
@@ -94,12 +123,21 @@ in {
         rotate = 357;
       };
 
-      temperature = {
-        critical-threshold = 90;
-        format = "{temperatureC}°C";
-        format-icons = ["" "" ""];
-        rotate = 357;
-      };
+      temperature =
+        {
+          critical-threshold = 90;
+          format = "{temperatureC}°C";
+          format-icons = ["" "" ""];
+          rotate = 357;
+        }
+        # Senza hwmon-path waybar legge thermal_zone0, che su lenuovo è
+        # INT3400: un sensore di policy ACPI, non un termometro, e resta
+        # inchiodato a 20 °C. Il sensore vero è coretemp/Core 0, cioè
+        # temp2_input (su Bay Trail manca il "Package id 0" = temp1).
+        // lib.optionalAttrs (!full) {
+          hwmon-path-abs = "/sys/devices/platform/coretemp.0/hwmon";
+          input-filename = "temp2_input";
+        };
 
       backlight = {
         format = "{percent}{icon}";
@@ -163,14 +201,14 @@ in {
         };
         escape = true;
         on-click = "playerctl play-pause";
-        exec = "$HOME/.config/waybar/mediaplayer.py 2> /dev/null";
+        exec = "${lib.getExe mediaplayer} 2> /dev/null";
       };
 
       "custom/weather" = {
         format = "{} °";
         tooltip = true;
         interval = 1800;
-        exec = "wttrbar --location Valbonne";
+        exec = "wttrbar --location ${weatherLocation}";
         return-type = "json";
       };
 
