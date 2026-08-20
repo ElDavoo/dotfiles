@@ -10,6 +10,10 @@
     inputs.nixos-hardware.nixosModules.common-cpu-intel
     ./hardware-configuration.nix
     ./hardware.nix
+
+    # 4 GB di RAM: zram al 100%, sysctl tarati per lo swap compresso e
+    # earlyoom come rete di sicurezza prima dell'OOM killer del kernel.
+    ../../modules/oom.nix
   ];
 
   networking.hostName = "lenuovo";

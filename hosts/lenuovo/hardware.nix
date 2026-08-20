@@ -58,7 +58,7 @@
   # arriva prima della fine (i 4 core restano usabili dentro il singolo build).
   nix.settings.max-jobs = 1;
 
-  # Swapfile sulla root, in aggiunta a zram (1,9 GB compressi).
+  # Swapfile sulla root, in aggiunta a zram (vedi ../../modules/oom.nix).
   #
   # ATTENZIONE: mkswap-swapfile.service crea il file con `dd` sul percorso
   # critico del boot, e salta il lavoro solo se il file esiste gia' ed e'
@@ -71,7 +71,10 @@
   swapDevices = [
     {
       device = "/swapfile";
-      size = 1024;
+      # Priorità sotto quella di zram: si usa il disco solo quando la RAM
+      # compressa è esaurita.
+      priority = -2;
+      size = 2048;
     }
   ];
 }
