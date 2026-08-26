@@ -13,10 +13,67 @@
 
   # Il meteo segue la macchina, non l'utente: mattone sta a Valbonne,
   # lenuovo ad Apricena.
-  weatherLocation =
+  weatherCoords =
     if full
-    then "Valbonne"
-    else "Apricena";
+    then {
+      lat = "43.6408";
+      lon = "7.0075";
+      name = "Valbonne";
+    }
+    else {
+      lat = "41.7833";
+      lon = "15.4444";
+      name = "Apricena";
+    };
+
+  # wttrbar interroga wttr.in, che restituisce "weather data source not
+  # available" (HTTP 500) per qualsiasi localita' quando il suo backend e'
+  # giu': wttrbar allora stampa "invalid wttr.in response" nella barra.
+  # Qui usiamo direttamente Open-Meteo (nessuna API key, coordinate fisse)
+  # ed emettiamo il JSON che waybar si aspetta.
+  weather = pkgs.writeShellApplication {
+    name = "waybar-weather";
+    runtimeInputs = [pkgs.curl pkgs.jq];
+    text = ''
+      url="https://api.open-meteo.com/v1/forecast?latitude=${weatherCoords.lat}&longitude=${weatherCoords.lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=auto&forecast_days=3"
+
+      if ! body=$(curl -sf --max-time 15 "$url"); then
+        jq -nc '{text: "󰅤", tooltip: "meteo non disponibile", class: "offline"}'
+        exit 0
+      fi
+
+      printf '%s' "$body" | jq -c --arg place "${weatherCoords.name}" '
+        # WMO weather code -> (icona, descrizione)
+        def wmo:
+          if   . == 0 then ["☀️", "sereno"]
+          elif . <= 2 then ["🌤️", "poco nuvoloso"]
+          elif . == 3 then ["☁️", "coperto"]
+          elif . <= 48 then ["🌫️", "nebbia"]
+          elif . <= 57 then ["🌦️", "pioviggine"]
+          elif . <= 67 then ["🌧️", "pioggia"]
+          elif . <= 77 then ["🌨️", "neve"]
+          elif . <= 82 then ["🌧️", "rovesci"]
+          elif . <= 86 then ["🌨️", "rovesci di neve"]
+          else ["⛈️", "temporale"] end;
+        (.current.weather_code | wmo) as $w
+        | {
+            text: "\($w[0]) \(.current.temperature_2m | round)°",
+            class: "weather",
+            tooltip: ([
+              "\($place): \($w[1])",
+              "Temperatura: \(.current.temperature_2m)° (percepita \(.current.apparent_temperature)°)",
+              "Umidita: \(.current.relative_humidity_2m)%",
+              "Vento: \(.current.wind_speed_10m) km/h",
+              "Alba \(.daily.sunrise[0][11:16]) · Tramonto \(.daily.sunset[0][11:16])",
+              ""
+            ] + (. as $d | [
+              range(0; $d.daily.time | length)
+              | "\($d.daily.time[.]): min \($d.daily.temperature_2m_min[.])° / max \($d.daily.temperature_2m_max[.])°"
+            ])) | join("\n")
+          }' 2>/dev/null \
+        || jq -nc '{text: "󰅤", tooltip: "risposta meteo non valida", class: "offline"}'
+    '';
+  };
 
   # mediaplayer.py fa `import gi` + `gi.require_version("Playerctl", "2.0")`:
   # il python3 nudo di home/packages.nix non ha né PyGObject né il typelib di
@@ -205,10 +262,10 @@ in {
       };
 
       "custom/weather" = {
-        format = "{} °";
+        format = "{}";
         tooltip = true;
         interval = 1800;
-        exec = "wttrbar --location ${weatherLocation}";
+        exec = "${lib.getExe weather}";
         return-type = "json";
       };
 
