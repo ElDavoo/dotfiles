@@ -33,8 +33,9 @@ buildNpmPackage {
 
     npm prune --omit=dev
 
-    mkdir -p $out/share/scrcpy-desktop
-    cp -r src-server public/dist node_modules package.json $out/share/scrcpy-desktop/
+    mkdir -p $out/share/scrcpy-desktop/public
+    cp -r src-server node_modules package.json $out/share/scrcpy-desktop/
+    cp -r public/dist $out/share/scrcpy-desktop/public/
 
     makeWrapper ${nodejs}/bin/node $out/bin/scrcpy-desktop \
       --add-flags "$out/share/scrcpy-desktop/src-server/server.js" \
