@@ -61,6 +61,9 @@
                 # Espone pkgs.firefox-addons costruito con la nostra nixpkgs
                 # (così allowUnfree copre estensioni come Tampermonkey).
                 inputs.firefox-addons.overlays.default
+                (final: prev: {
+                  scrcpy-desktop = final.callPackage ./pkgs/scrcpy-desktop.nix {};
+                })
               ];
             }
             ./configuration.nix
@@ -83,6 +86,10 @@
     };
 
     formatter.${system} = pkgs.alejandra;
+
+    # `nix build .#scrcpy-desktop` per testare il pacchetto da solo, senza
+    # valutare l'intero toplevel di un host.
+    packages.${system}.scrcpy-desktop = pkgs.callPackage ./pkgs/scrcpy-desktop.nix {};
 
     checks.${system} = {
       alejandra = pkgs.runCommand "alejandra-check" {buildInputs = [pkgs.alejandra];} ''

@@ -16,7 +16,6 @@ in {
       ncdu
       wl-clipboard
       wl-gammarelay-rs
-      wttrbar
       grim
       slurp
       hyprpolkitagent
@@ -38,6 +37,7 @@ in {
       anydesk
       android-tools
       scrcpy
+      scrcpy-desktop
       vesktop
       gnome-calculator
       thunderbird
