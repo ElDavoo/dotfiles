@@ -23,16 +23,21 @@
     max-free = 10 * 1024 * 1024 * 1024; # 10 GiB
   };
 
-  # nh: rebuild con output leggibile (nh os switch). Il clean mensile serve
-  # solo a potare le vecchie generazioni (che restano GC-root); la pulizia dei
-  # path non referenziati resta demandata a min-free/max-free.
+  # nh: rebuild con output leggibile (nh os switch). Il clean pota le vecchie
+  # generazioni (che restano GC-root); la pulizia dei path non referenziati
+  # resta demandata a min-free/max-free.
+  #
+  # Settimanale, non mensile: qui si accumulano ~2 generazioni al giorno, e
+  # finche' restano GC-root il GC on-demand di min-free non ha nulla da
+  # liberare. Con il clean mensile lo store era arrivato a 58 GiB su 27
+  # generazioni (chiusura viva: ~13 GiB).
   programs.nh = {
     enable = true;
     flake = "/home/dave/git/dotfiles";
     clean = {
       enable = true;
-      dates = "monthly";
-      extraArgs = "--keep 5";
+      dates = "weekly";
+      extraArgs = "--keep 3 --keep-since 7d";
     };
   };
   nix.optimise.automatic = false;
