@@ -3,6 +3,8 @@
   pkgs,
   ...
 }: let
+  uniwill-laptop = config.boot.kernelPackages.callPackage ../pkgs/uniwill-laptop.nix {};
+
   # setta il refresh del pannello interno: refresh-rate [165|40|auto]
   # (il BOE supporta solo questi due mode; "auto" sceglie in base
   # all'alimentazione). Funziona sia da utente che da root (udev).
@@ -76,5 +78,60 @@ in {
     # limita la iGPU a batteria (range hardware: 350-1200 MHz)
     INTEL_GPU_MAX_FREQ_ON_BAT = 800;
     INTEL_GPU_BOOST_FREQ_ON_BAT = 800;
+  };
+
+  # --- profilo di ricarica della batteria -----------------------------------
+  #
+  # La scheda non è nella tabella DMI del driver (quella elenca solo modelli
+  # TUXEDO/Schenker/Intel NUC), quindi serve force=1. force abilita tutte le
+  # feature TRANNE la soglia numerica charge_control_end_threshold, che viene
+  # mascherata apposta per non danneggiare la batteria su schede non validate.
+  # Non è una perdita: il registro della soglia (EC 0x07B9) su questo firmware
+  # non è nemmeno mappato in ACPI, la field list di ECMG salta esattamente
+  # quel byte. Resta l'interfaccia a profili, che è quella giusta per i GM7.
+  boot.extraModulePackages = [uniwill-laptop];
+  boot.extraModprobeConfig = "options uniwill-laptop force=1";
+
+  # Niente autoload: gli alias DMI del modulo non coprono questa scheda.
+  boot.kernelModules = ["uniwill-laptop"];
+
+  # ATTENZIONE ai nomi, sono controintuitivi. La mappatura driver → EC è:
+  #   Standard    → HIGH_CAPACITY (100%)
+  #   Long Life   → BALANCED      (~90%)
+  #   Trickle     → STATIONARY    (~80%, e carica anche più lenta)
+  # Quindi il profilo "stationary" da scrivere è "Trickle", NON "Long Life".
+  systemd.services.battery-charge-profile = {
+    description = "Battery charging profile (Uniwill EC) → stationary";
+    wantedBy = ["multi-user.target"];
+    after = ["systemd-modules-load.service"];
+
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+
+    script = ''
+      attr=/sys/class/power_supply/BAT0/charge_types
+
+      # il battery hook del driver si registra poco dopo il probe
+      for _ in $(seq 20); do
+        [ -e "$attr" ] && break
+        sleep 0.25
+      done
+
+      if [ ! -e "$attr" ]; then
+        echo "$attr assente: il driver non ha esposto i profili di ricarica" >&2
+        exit 1
+      fi
+
+      echo Trickle > "$attr"
+
+      # l'EC può accettare la scrittura e ignorarla: rileggiamo per sapere
+      # se il profilo è davvero attivo (l'attivo è quello fra parentesi)
+      if ! grep -q '\[Trickle\]' "$attr"; then
+        echo "profilo non applicato, l'EC riporta: $(cat "$attr")" >&2
+        exit 1
+      fi
+    '';
   };
 }

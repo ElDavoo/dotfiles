@@ -25,5 +25,6 @@
     login.enableGnomeKeyring = true;
   };
 
-  services.dbus.packages = [pkgs.gnome-keyring pkgs.gcr];
+  # gcr_3, non gcr_4: solo la 3 fornisce i .service dbus del prompter
+  services.dbus.packages = [pkgs.gnome-keyring pkgs.gcr_3];
 }

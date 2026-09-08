@@ -10,6 +10,11 @@
     timeout = 1;
   };
 
+  # Serve >= 7.2 per uniwill-laptop (vedi modules/power.nix): il driver è in
+  # mainline dal 7.2 ma nixpkgs non lo compila, e il repo fuori albero da cui
+  # lo prendiamo richiede comunque quella versione minima.
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   boot.kernelParams = [
     "nvidia_modeset.hdmi_deepcolor=0"
     "nvidia_drm.fbdev=0"
