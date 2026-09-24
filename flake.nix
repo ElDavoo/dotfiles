@@ -61,7 +61,7 @@
                 # Espone pkgs.firefox-addons costruito con la nostra nixpkgs
                 # (così allowUnfree copre estensioni come Tampermonkey).
                 inputs.firefox-addons.overlays.default
-                (final: prev: {
+                (final: _prev: {
                   scrcpy-desktop = final.callPackage ./pkgs/scrcpy-desktop.nix {};
                 })
               ];
