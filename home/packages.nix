@@ -32,6 +32,7 @@ in {
       yt-dlp
       python3
       gh
+      glab
       telegram-desktop
       joplin-desktop
       anydesk
