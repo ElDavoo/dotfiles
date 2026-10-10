@@ -10,6 +10,13 @@ _: {
         exec uwsm start hyprland.desktop
       fi
     '';
+    # Tutto quello che parte da un terminale diventa la prima vittima degli OOM
+    # killer (kernel ed earlyoom), prima delle app grafiche che stanno a 200.
+    # Alzare il proprio oom_score_adj non richiede privilegi e i figli lo
+    # ereditano. Non sulla shell di login del tty1, da cui parte la sessione.
+    initExtra = ''
+      shopt -q login_shell || echo 1000 > /proc/$$/oom_score_adj 2>/dev/null
+    '';
     shellAliases = {
       lofi = "mpv --no-video https://www.youtube.com/watch?v=jfKfPfyJRdk";
       urldecode = "python3 -c 'import sys, urllib.parse as ul; print(ul.unquote_plus(sys.stdin.read()))'";

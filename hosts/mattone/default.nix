@@ -11,6 +11,7 @@
     ./hardware-configuration.nix
     ./hardware.nix
     ./storage.nix
+    ./memory.nix
 
     # Moduli che restano solo su mattone: o dipendono dal suo hardware
     # (power, gaming) o pesano troppo per le macchine piccole.

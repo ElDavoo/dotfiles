@@ -35,6 +35,14 @@ _: {
     "vm.vfs_cache_pressure" = 200;
   };
 
+  # Protezione del working set di MGLRU: se le pagine usate nell'ultimo secondo
+  # non possono restare in RAM, invece di continuare a sfrattarle (= thrashing)
+  # il kernel chiama subito l'OOM killer.
+  # Vedi Documentation/admin-guide/mm/multigen_lru.rst, "Thrashing prevention".
+  systemd.tmpfiles.rules = [
+    "w /sys/kernel/mm/lru_gen/min_ttl_ms - - - - 1000"
+  ];
+
   # earlyoom guarda memoria e swap liberi in percentuale e manda SIGTERM al
   # processo più grosso quando si scende sotto soglia, SIGKILL se si continua
   # a scendere. È userspace e non dipende dai cgroup, quindi copre anche i
@@ -54,11 +62,9 @@ _: {
     freeSwapThreshold = 15;
     freeSwapKillThreshold = 7;
 
+    # Niente --prefer: l'ordine "prima la roba da terminale, poi le app
+    # grafiche" lo dà già oom_score_adj (vedi home/bash.nix).
     extraArgs = [
-      # Da preferire come vittime: i divoratori di RAM che si riaprono senza
-      # perdere niente di irrecuperabile.
-      "--prefer"
-      "^(firefox|\\.firefox-wrapped|chromium|electron|steam|steamwebhelper|nix|nix-build|cc1plus|rustc|ld)$"
       # Da risparmiare: se muore uno di questi si perde la sessione, non un
       # programma.
       "--avoid"
