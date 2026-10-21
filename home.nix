@@ -12,5 +12,6 @@
     ./home/packages.nix
     ./home/git.nix
     ./home/bash.nix
+    ./home/pi.nix
   ];
 }
