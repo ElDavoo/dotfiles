@@ -3,6 +3,7 @@
   stdenv,
   fetchFromGitHub,
   kernel,
+  kernelModuleMakeFlags,
 }:
 # Driver per l'EC dei portatili Uniwill/TongFang (mattone è un GM5MG7Y, che si
 # presenta come TongFang GM7MG7P). Sta in mainline dal 7.2 come
@@ -29,14 +30,18 @@ stdenv.mkDerivation {
   buildPhase = ''
     runHook preBuild
     make -C ${kernel.dev}/lib/modules/${kernel.modDirVersion}/build \
-      M=$(pwd) modules
+      M=$(pwd) ${lib.escapeShellArgs kernelModuleMakeFlags} modules
     runHook postBuild
   '';
 
+  # La firma (kmodigest → .ko.cer, richiesto dall'aggregazione modules.cer del
+  # kernel) avviene in modules_install, non in build.
   installPhase = ''
     runHook preInstall
-    install -Dm444 uniwill-laptop.ko \
-      -t $out/lib/modules/${kernel.modDirVersion}/kernel/drivers/platform/x86
+    make -C ${kernel.dev}/lib/modules/${kernel.modDirVersion}/build \
+      M=$(pwd) ${lib.escapeShellArgs kernelModuleMakeFlags} \
+      INSTALL_MOD_PATH=$out INSTALL_MOD_DIR=kernel/drivers/platform/x86 \
+      modules_install
     runHook postInstall
   '';
 
