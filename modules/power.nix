@@ -211,6 +211,10 @@ in {
         sleep 0.25
       done
 
+      if [ ! -e /sys/class/power_supply/BAT0 ]; then
+        echo "nessuna batteria, niente da impostare"
+        exit 0
+      fi
       if [ ! -e "$attr" ]; then
         echo "$attr assente: il driver non ha esposto i profili di ricarica" >&2
         exit 1
