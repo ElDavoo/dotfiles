@@ -59,6 +59,19 @@
   };
 
   hardware.nvidia-container-toolkit.enable = true;
+  # con la dGPU disabilitata dal BIOS il modulo nvidia si carica ma non trova
+  # schede, il generatore CDI fallisce ("Driver Not Loaded") e lo switch esce
+  # con errore. Lo saltiamo se sul bus PCI non c'è una scheda video NVIDIA
+  # (vendor 0x10de, classe 0x03): /dev/nvidia0 non andrebbe bene perché le
+  # Condition* vengono valutate prima che udev abbia creato i nodi.
+  systemd.services.nvidia-container-toolkit-cdi-generator.serviceConfig.ExecCondition = pkgs.writeShellScript "has-nvidia-gpu" ''
+    for d in /sys/bus/pci/devices/*; do
+      if [ "$(cat "$d/vendor")" = 0x10de ] && [[ "$(cat "$d/class")" == 0x03* ]]; then
+        exit 0
+      fi
+    done
+    exit 1
+  '';
   virtualisation.docker.daemon.settings.features.cdi = true;
 
   # nix.settings.system-features = [ "gccarch-native" ];
