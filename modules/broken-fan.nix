@@ -1,28 +1,26 @@
-# TEMPORANEO: la ventola della CPU è rotta. Tutto quello che serve per tenere
-# la CPU sotto ~50 °C (sopra l'EC accende la ventola) sta in questo file:
-# quando arriva il ricambio basta togliere l'import da hosts/mattone/default.nix
-# e cancellare il file.
+# TEMPORANEO: la ventola della CPU era rotta ed è stata smontata, quindi il
+# raffreddamento è solo passivo. Tutto quello che serve per tenere la CPU
+# sotto ~65 °C sta in questo file: quando arriva il ricambio basta togliere
+# l'import da hosts/mattone/default.nix e cancellare il file.
 #
-# Tre livelli, dal più rigido al più dinamico:
-#   1. TLP: niente turbo, frequenza massima tagliata, EPP al minimo consumo,
-#      iGPU limitata, sia su AC che a batteria;
-#   2. RAPL: tetto fisso alla potenza del package (PL1/PL2) a ogni avvio e
+# Frequenze e turbo restano quelli di serie; a limitare sono:
+#   1. RAPL: tetto fisso alla potenza del package (PL1/PL2) a ogni avvio e
 #      resume;
-#   3. thermald: se nonostante tutto x86_pkg_temp supera la soglia, abbassa
-#      ancora RAPL, poi P-state, poi inietta idle (powerclamp).
+#   2. thermald: se x86_pkg_temp supera la soglia abbassa PL1, poi P-state,
+#      poi inietta idle (powerclamp);
+#   3. TLP: iGPU limitata anche su AC.
 {pkgs, ...}: let
   # ritocca qui se è troppo lento o scalda ancora troppo
-  maxFreqKHz = 1600000; # base 2.3 GHz, turbo 5.1 GHz
-  pl1W = 10; # sostenuto (default BIOS: 120 W)
-  pl2W = 12; # picchi brevi
+  pl1W = 15; # sostenuto (default BIOS: 120 W)
+  pl2W = 20; # picchi brevi
   pl1MinW = 4; # sotto questo thermald passa a P-state e powerclamp
-  tripMilliC = 45000; # thermald interviene qui, margine sotto i 50 °C
+  tripMilliC = 65000; # thermald interviene qui
 
   thermaldConf = pkgs.writeText "thermal-conf.xml" ''
     <?xml version="1.0"?>
     <ThermalConfiguration>
       <Platform>
-        <Name>mattone ventola rotta</Name>
+        <Name>mattone senza ventola</Name>
         <ProductName>*</ProductName>
         <Preference>QUIET</Preference>
         <!-- senza PPCC il rapl_controller usa come tetto il TDP di targa
@@ -70,17 +68,8 @@
     </ThermalConfiguration>
   '';
 in {
-  # si sommano alle impostazioni di power.nix (dove coincidono i valori sono
-  # gli stessi), qui valgono anche su AC
+  # power.nix la limita solo a batteria
   services.tlp.settings = {
-    CPU_BOOST_ON_AC = 0;
-    CPU_BOOST_ON_BAT = 0;
-    CPU_HWP_DYN_BOOST_ON_AC = 0;
-    CPU_HWP_DYN_BOOST_ON_BAT = 0;
-    CPU_ENERGY_PERF_POLICY_ON_AC = "power";
-    CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
-    CPU_SCALING_MAX_FREQ_ON_AC = maxFreqKHz;
-    CPU_SCALING_MAX_FREQ_ON_BAT = maxFreqKHz;
     INTEL_GPU_MAX_FREQ_ON_AC = 800;
     INTEL_GPU_BOOST_FREQ_ON_AC = 800;
   };
@@ -88,7 +77,7 @@ in {
   # i limiti RAPL non persistono e il BIOS li rimette a 120 W al resume.
   # thermald riscrive PL1 (fra pl1MinW e pl1W, vedi PPCC) ma non PL2.
   systemd.services.broken-fan-power-cap = {
-    description = "Package power cap (ventola rotta)";
+    description = "Package power cap (senza ventola)";
     wantedBy = ["multi-user.target" "post-resume.target"];
     after = ["post-resume.target"];
     before = ["thermald.service"];
