@@ -24,6 +24,9 @@
     ../../modules/hermes.nix
     ../../modules/secrets.nix
     ../../modules/gparted-live.nix
+
+    # TEMPORANEO finché non arriva la ventola nuova
+    ../../modules/broken-fan.nix
   ];
 
   networking.hostName = "mattone";
