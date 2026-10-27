@@ -15,6 +15,7 @@
   maxFreqKHz = 1600000; # base 2.3 GHz, turbo 5.1 GHz
   pl1W = 10; # sostenuto (default BIOS: 120 W)
   pl2W = 12; # picchi brevi
+  pl1MinW = 4; # sotto questo thermald passa a P-state e powerclamp
   tripMilliC = 45000; # thermald interviene qui, margine sotto i 50 °C
 
   thermaldConf = pkgs.writeText "thermal-conf.xml" ''
@@ -24,6 +25,16 @@
         <Name>mattone ventola rotta</Name>
         <ProductName>*</ProductName>
         <Preference>QUIET</Preference>
+        <!-- senza PPCC il rapl_controller usa come tetto il TDP di targa
+             (constraint_0_max_power_uw = 45 W) e scavalca il nostro PL1.
+             Valori in mW e ms. -->
+        <PPCC>
+          <PowerLimitMinimum>${toString (pl1MinW * 1000)}</PowerLimitMinimum>
+          <PowerLimitMaximum>${toString (pl1W * 1000)}</PowerLimitMaximum>
+          <TimeWindowMinimum>28000</TimeWindowMinimum>
+          <TimeWindowMaximum>28000</TimeWindowMaximum>
+          <StepSize>500</StepSize>
+        </PPCC>
         <ThermalZones>
           <ThermalZone>
             <Type>cpu</Type>
@@ -75,7 +86,7 @@ in {
   };
 
   # i limiti RAPL non persistono e il BIOS li rimette a 120 W al resume.
-  # Gira prima di thermald, che prende il PL1 di partenza come massimo.
+  # thermald riscrive PL1 (fra pl1MinW e pl1W, vedi PPCC) ma non PL2.
   systemd.services.broken-fan-power-cap = {
     description = "Package power cap (ventola rotta)";
     wantedBy = ["multi-user.target" "post-resume.target"];
