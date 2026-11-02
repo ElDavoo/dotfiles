@@ -1,8 +1,11 @@
 _: {
-  programs.fuse.userAllowOther = true;
+  # il modulo fuse di nixpkgs ora fornisce solo il wrapper fusermount3
+  programs.fuse = {
+    enable = true;
+    userAllowOther = true;
+  };
 
   security.wrappers = {
-    fusermount.setuid = true;
     mount.setuid = true;
     umount.setuid = true;
   };

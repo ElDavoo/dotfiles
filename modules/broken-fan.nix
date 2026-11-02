@@ -7,12 +7,11 @@
 #   1. RAPL: tetto fisso alla potenza del package (PL1/PL2) a ogni avvio e
 #      resume;
 #   2. thermald: se x86_pkg_temp supera la soglia abbassa PL1, poi P-state,
-#      poi inietta idle (powerclamp);
-#   3. TLP: iGPU limitata anche su AC.
+#      poi inietta idle (powerclamp).
 {pkgs, ...}: let
   # ritocca qui se è troppo lento o scalda ancora troppo
-  pl1W = 15; # sostenuto (default BIOS: 120 W)
-  pl2W = 20; # picchi brevi
+  pl1W = 20; # sostenuto (default BIOS: 120 W)
+  pl2W = 25; # picchi brevi
   pl1MinW = 4; # sotto questo thermald passa a P-state e powerclamp
   tripMilliC = 65000; # thermald interviene qui
 
@@ -68,12 +67,6 @@
     </ThermalConfiguration>
   '';
 in {
-  # power.nix la limita solo a batteria
-  services.tlp.settings = {
-    INTEL_GPU_MAX_FREQ_ON_AC = 800;
-    INTEL_GPU_BOOST_FREQ_ON_AC = 800;
-  };
-
   # i limiti RAPL non persistono e il BIOS li rimette a 120 W al resume.
   # thermald riscrive PL1 (fra pl1MinW e pl1W, vedi PPCC) ma non PL2.
   systemd.services.broken-fan-power-cap = {
