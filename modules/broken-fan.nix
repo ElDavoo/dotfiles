@@ -7,8 +7,13 @@
 #   1. RAPL: tetto fisso alla potenza del package (PL1/PL2) a ogni avvio e
 #      resume;
 #   2. thermald: se x86_pkg_temp supera la soglia abbassa PL1, poi P-state,
-#      poi inietta idle (powerclamp).
-{pkgs, ...}: let
+#      poi inietta idle (powerclamp);
+#   3. dGPU NVIDIA bloccata a clock e potenza minimi (vedi nvidia-min più sotto).
+{
+  config,
+  pkgs,
+  ...
+}: let
   # ritocca qui se è troppo lento o scalda ancora troppo
   pl1W = 20; # sostenuto (default BIOS: 120 W)
   pl2W = 25; # picchi brevi
@@ -83,6 +88,29 @@ in {
           short_term) echo ${toString (pl2W * 1000000)} > "''${c%_name}_power_limit_uw" ;;
         esac
       done
+    '';
+  };
+
+  # la dGPU condivide il dissipatore passivo: la teniamo al minimo assoluto
+  # (P8, clock grafica/memoria al più basso supportato, power limit non
+  # modificabile). Serve la persistence, altrimenti il driver scarta
+  # i limiti appena nessuno tiene aperto il device.
+  hardware.nvidia.nvidiaPersistenced = true;
+  systemd.services.broken-fan-nvidia-min = {
+    description = "dGPU NVIDIA a clock e potenza minimi (senza ventola)";
+    wantedBy = ["multi-user.target" "post-resume.target"];
+    after = ["post-resume.target" "nvidia-persistenced.service"];
+    serviceConfig = {
+      Type = "oneshot";
+      # con la dGPU disabilitata dal BIOS non c'è niente da limitare
+      ExecCondition = "${config.hardware.nvidia.package.bin}/bin/nvidia-smi -L";
+    };
+    script = ''
+      smi=${config.hardware.nvidia.package.bin}/bin/nvidia-smi
+      # il power limit (-pl) non è modificabile su questo portatile: il
+      # firmware non lo permette, quindi si bloccano solo i clock
+      $smi -lgc 210,210
+      $smi -lmc 405,405
     '';
   };
 
