@@ -8,7 +8,7 @@
 #      resume;
 #   2. thermald: se x86_pkg_temp supera la soglia abbassa PL1, poi P-state,
 #      poi inietta idle (powerclamp);
-#   3. dGPU NVIDIA bloccata a clock e potenza minimi (vedi nvidia-min più sotto).
+#   3. dGPU NVIDIA con clock grafica limitati a gpuMaxMHz (vedi nvidia-min).
 {
   config,
   pkgs,
@@ -19,6 +19,7 @@
   pl2W = 35; # picchi brevi
   pl1MinW = 4; # sotto questo thermald passa a P-state e powerclamp
   tripMilliC = 69000; # thermald interviene qui
+  gpuMaxMHz = 510; # tetto clock grafica dGPU (max 2100, minimo 210)
 
   thermaldConf = pkgs.writeText "thermal-conf.xml" ''
     <?xml version="1.0"?>
@@ -91,9 +92,8 @@ in {
     '';
   };
 
-  # la dGPU condivide il dissipatore passivo: la teniamo al minimo assoluto
-  # (P8, clock grafica/memoria al più basso supportato, power limit non
-  # modificabile). Serve la persistence, altrimenti il driver scarta
+  # la dGPU condivide il dissipatore con la CPU, ma ha la ventola: la teniamo
+  # con un tetto ai clock (power limit non modificabile). Serve la persistence, altrimenti il driver scarta
   # i limiti appena nessuno tiene aperto il device.
   hardware.nvidia.nvidiaPersistenced = true;
   systemd.services.broken-fan-nvidia-min = {
@@ -108,9 +108,11 @@ in {
     script = ''
       smi=${config.hardware.nvidia.package.bin}/bin/nvidia-smi
       # il power limit (-pl) non è modificabile su questo portatile: il
-      # firmware non lo permette, quindi si bloccano solo i clock
-      $smi -lgc 210,210
-      $smi -lmc 405,405
+      # firmware non lo permette, quindi si limitano solo i clock. La ventola
+      # secondaria (quella sulla GPU) funziona e spinge sul dissipatore
+      # condiviso, quindi la GPU può salire fino a gpuMaxMHz; la memoria
+      # resta libera (a riposo scende da sola a 405 MHz).
+      $smi -lgc 210,${toString gpuMaxMHz}
     '';
   };
 
