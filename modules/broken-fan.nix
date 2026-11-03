@@ -15,10 +15,10 @@
   ...
 }: let
   # ritocca qui se è troppo lento o scalda ancora troppo
-  pl1W = 20; # sostenuto (default BIOS: 120 W)
-  pl2W = 25; # picchi brevi
+  pl1W = 25; # sostenuto (default BIOS: 120 W)
+  pl2W = 35; # picchi brevi
   pl1MinW = 4; # sotto questo thermald passa a P-state e powerclamp
-  tripMilliC = 65000; # thermald interviene qui
+  tripMilliC = 69000; # thermald interviene qui
 
   thermaldConf = pkgs.writeText "thermal-conf.xml" ''
     <?xml version="1.0"?>
