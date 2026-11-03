@@ -99,6 +99,27 @@
         "type": "github"
       }
     },
+    "gpu-unlock": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793234726,
+        "narHash": "sha256-PQp8rKsrwdNf7lS2qXBfLxvowHz3XKJU/4UDIYnJbSk=",
+        "owner": "randomizedcoder",
+        "repo": "gpu-unlock",
+        "rev": "63e51c2296eaa8992fecf32c3b6d6265ef377e22",
+        "type": "github"
+      },
+      "original": {
+        "owner": "randomizedcoder",
+        "ref": "nix/followups",
+        "repo": "gpu-unlock",
+        "type": "github"
+      }
+    },
     "hermes-agent": {
       "inputs": {
         "flake-parts": "flake-parts",
@@ -336,6 +357,7 @@
         "claude-code": "claude-code",
         "claude-desktop": "claude-desktop",
         "firefox-addons": "firefox-addons",
+        "gpu-unlock": "gpu-unlock",
         "hermes-agent": "hermes-agent",
         "home-manager": "home-manager_2",
         "nixos-hardware": "nixos-hardware",

@@ -38,6 +38,14 @@
       kernelSuspendNotifier = true;
     };
     package = config.boot.kernelPackages.nvidiaPackages.production;
+
+    # gpu-unlock: sblocca la 3070 (GA104M) prima che nvidia la prenda, e di
+    # nuovo al resume. Se la dGPU andasse davvero in D3cold lo sblocco si
+    # perderebbe in silenzio, ma su questa macchina il D3cold non funziona.
+    gpuUnlock = {
+      enable = true;
+      targets = ["0000:01:00.0"];
+    };
   };
 
   hardware.nvidia.prime = {

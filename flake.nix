@@ -10,6 +10,14 @@
 
     hermes-agent.url = "github:NousResearch/hermes-agent";
 
+    # Sblocco del throughput Tensor sulle Ampere (modulo kernel + firmware).
+    # Il flake non è ancora upstream: è Zagitta/gpu-unlock#186 più i follow-up
+    # di randomizedcoder/gpu-unlock#13, ribasati su gpu-unlock 2.0.
+    gpu-unlock = {
+      url = "github:randomizedcoder/gpu-unlock?ref=nix/followups";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Uses its own pinned nixpkgs: the flake needs nodePackages,
     # which was removed from nixpkgs-unstable.
     claude-desktop.url = "github:k3d3/claude-desktop-linux-flake";
@@ -81,7 +89,10 @@
       };
   in {
     nixosConfigurations = {
-      mattone = mkHost "mattone" [hermes-agent.nixosModules.default];
+      mattone = mkHost "mattone" [
+        hermes-agent.nixosModules.default
+        inputs.gpu-unlock.nixosModules.default
+      ];
       lenuovo = mkHost "lenuovo" [];
     };
 
